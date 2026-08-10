@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sri Meenakshi Express — Food Store, GPS Location &amp; Live Search</title>
+<title>Sri Meenakshi Foods — Amma Prematho Homemade Foods &amp; Pickles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -76,7 +76,7 @@
   .loc-bar svg{width:18px; height:18px; color:var(--turmeric); flex-shrink:0;}
   .loc-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
-  /* Search Box Input & Live Dropdown Popup */
+  /* Search Box Input & Live Suggestions Popup */
   .search-box{flex:1; max-width:340px; position:relative;}
   .search-box input{
     width:100%; padding:10px 36px 10px 38px; border-radius:20px; border:2px solid transparent;
@@ -193,8 +193,8 @@
   .food-title{font-size:1.05rem; font-weight:700; margin-bottom:4px;}
   .food-desc{font-size:0.83rem; color:#666; margin-bottom:12px; flex:1;}
 
-  .variant-select{display:flex; gap:6px; margin-bottom:12px;}
-  .var-btn{flex:1; border:1px solid var(--border-color); background:var(--gray-bg); padding:4px; border-radius:8px; font-size:0.76rem; font-weight:600; text-align:center; cursor:pointer;}
+  .variant-select{display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;}
+  .var-btn{flex:1; min-width:55px; border:1px solid var(--border-color); background:var(--gray-bg); padding:4px; border-radius:8px; font-size:0.76rem; font-weight:600; text-align:center; cursor:pointer;}
   .var-btn.selected{background:var(--maroon); color:#fff;}
 
   .food-footer{display:flex; align-items:center; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:10px; margin-top:auto;}
@@ -280,8 +280,8 @@
     <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
       <div class="seal">SM</div>
       <div class="brand-text">
-        <div class="name">Sri Meenakshi Express</div>
-        <div class="tag">amma prematho • online store</div>
+        <div class="name">Sri Meenakshi Foods</div>
+        <div class="tag">amma prematho • homemade foods</div>
       </div>
     </div>
 
@@ -294,7 +294,7 @@
     <!-- Search Input Bar & Live Suggestions Popup -->
     <div class="search-box">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="searchInput" placeholder="Search pickles, laddus, snacks..." autocomplete="off">
+      <input type="text" id="searchInput" placeholder="Search pickles, laddus, spices..." autocomplete="off">
       <button class="clear-search" id="clearSearchBtn" onclick="clearSearch()">&times;</button>
 
       <!-- Live Search Suggestions Popup -->
@@ -330,8 +330,8 @@
 <section class="hero-section" id="home">
   <div class="wrap hero-inner">
     <div class="hero-text">
-      <h1>Handmade Pickles &amp; Sweets <em>amma prematho</em></h1>
-      <p>Authentic Andhra pickles and ghee-roasted laddus made fresh in Vijayawada.</p>
+      <h1>Sri Meenakshi Foods <em>amma prematho</em></h1>
+      <p>Authentic homemade pickles, traditional sweets, festive ariselu &amp; pure spices made with love in Vijayawada.</p>
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="scrollToStore()">Browse Food Store 🛒</button>
         <button class="btn btn-secondary" onclick="openYourOrdersModal()">View Your Orders 📦</button>
@@ -353,7 +353,8 @@
       <button class="cat-pill active" data-cat="all">All Items</button>
       <button class="cat-pill" data-cat="nonveg">🍗 Non-Veg Pickles</button>
       <button class="cat-pill" data-cat="veg">🌿 Veg Pickles</button>
-      <button class="cat-pill" data-cat="laddu">🍬 Laddus &amp; Sweets</button>
+      <button class="cat-pill" data-cat="snack">🍬 Snacks &amp; Laddus</button>
+      <button class="cat-pill" data-cat="spice">🌶️ Pure Spices</button>
     </div>
 
     <label style="font-size:0.82rem; font-weight:700; cursor:pointer;">
@@ -480,7 +481,7 @@
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
     <button class="modal-close" onclick="closeAuthModal()">&times;</button>
-    <h2>👤 Login to Sri Meenakshi</h2>
+    <h2>👤 Login to Sri Meenakshi Foods</h2>
     <p style="font-size:0.85rem; color:#666; margin-bottom:16px;">Access your personal order store and saved addresses.</p>
 
     <form onsubmit="handleAuthSubmit(event)">
@@ -529,9 +530,9 @@
         <div>
           <strong style="font-size:0.95rem;">👨‍🛵 Ramesh Kumar (Delivery Partner)</strong>
           <div style="font-size:0.78rem; color:#666;">Hero Honda Activa • AP16 AB 4521</div>
-          <div style="font-size:0.82rem; font-weight:700; color:var(--maroon); margin-top:2px;">Phone: +91 98765 43210</div>
+          <div style="font-size:0.82rem; font-weight:700; color:var(--maroon); margin-top:2px;">Phone: 7661810326 / 9059016931</div>
         </div>
-        <a href="tel:+919876543210" class="call-partner-btn">📞 Call Partner</a>
+        <a href="tel:7661810326" class="call-partner-btn">📞 Call Partner</a>
       </div>
 
       <div style="background:var(--cream); padding:12px; border-radius:10px; font-size:0.85rem; margin-top:14px;" id="trackModalItems"></div>
@@ -541,9 +542,9 @@
 
 <footer>
   <div class="wrap">
-    <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
-      <div>© 2026 Sri Meenakshi Express. All rights reserved.</div>
-      <div>WhatsApp Support: +91 76618 10326</div>
+    <div style="display:flex; justify-content:space-between; font-size:0.85rem; flex-wrap:wrap; gap:10px;">
+      <div>© 2026 Sri Meenakshi Foods. All rights reserved.</div>
+      <div>WhatsApp Support: 7661810326 / 9059016931</div>
     </div>
   </div>
 </footer>
@@ -551,15 +552,298 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyUEvrv3ipopo948Nskpsxjq2SQhy4lQzWn6MHEbiY_r3CSiByJACk1t8ABd_yciRWk/exec";
 
+  // Official Sri Meenakshi Foods Menu Items & Exact Rates
   const FOOD_ITEMS = [
-    { id: 'chicken_pickle', name: 'Chicken Pickle (Boneless)', cat: 'nonveg', isVeg: false, rating: '4.9 ★', badge: 'Bestseller', desc: 'Tender chicken slow-cooked in traditional Andhra spices and gingelly oil.', variants: [{ label: '250g', price: 200 }, { label: '500g', price: 380 }, { label: '1kg', price: 720 }] },
-    { id: 'gongura_chicken', name: 'Gongura Chicken Pickle', cat: 'nonveg', isVeg: false, rating: '4.8 ★', badge: 'Special', desc: 'Sour gongura leaves infused with chicken pickle spice blend.', variants: [{ label: '250g', price: 220 }, { label: '500g', price: 410 }, { label: '1kg', price: 780 }] },
-    { id: 'prawns_pickle', name: 'Prawns Pickle (Andhra Style)', cat: 'nonveg', isVeg: false, rating: '4.9 ★', badge: 'Popular', desc: 'Crispy fried prawns marinated in garlic, red chilli, and lemon.', variants: [{ label: '250g', price: 260 }, { label: '500g', price: 490 }, { label: '1kg', price: 940 }] },
-    { id: 'mango_avakaya', name: 'Avakaya Mango Pickle', cat: 'veg', isVeg: true, rating: '5.0 ★', badge: 'Must Try', desc: 'Raw cut mangoes cured with mustard powder, chilli, and oil.', variants: [{ label: '250g', price: 120 }, { label: '500g', price: 220 }, { label: '1kg', price: 400 }] },
-    { id: 'mango_thokku', name: 'Mango Thokku Pickle', cat: 'veg', isVeg: true, rating: '4.7 ★', badge: '', desc: 'Grated mango cooked down thick and spicy.', variants: [{ label: '250g', price: 100 }, { label: '500g', price: 190 }, { label: '1kg', price: 360 }] },
-    { id: 'gongura_pickle', name: 'Gongura Veg Pickle', cat: 'veg', isVeg: true, rating: '4.9 ★', badge: 'Classic', desc: 'Authentic Andhra sorrel leaf pickle.', variants: [{ label: '250g', price: 100 }, { label: '500g', price: 190 }, { label: '1kg', price: 360 }] },
-    { id: 'ragi_laddu', name: 'Ragi Ghee Laddu', cat: 'laddu', isVeg: true, rating: '4.8 ★', badge: 'Healthy', desc: 'Finger millet flour roasted in pure cow ghee.', variants: [{ label: '250g', price: 140 }, { label: '500g', price: 260 }, { label: '1kg', price: 500 }] },
-    { id: 'dryfruit_laddu', name: 'Dry Fruits Laddu', cat: 'laddu', isVeg: true, rating: '5.0 ★', badge: 'Premium', desc: 'Cashews, almonds, pistachios, dates, ghee.', variants: [{ label: '250g', price: 170 }, { label: '500g', price: 320 }, { label: '1kg', price: 620 }] }
+    // --- NON VEG PICKLES ---
+    {
+      id: 'chicken_boneless',
+      name: 'Chicken Pickle (Boneless)',
+      cat: 'nonveg',
+      isVeg: false,
+      rating: '4.9 ★',
+      badge: 'Bestseller',
+      desc: 'Tender boneless chicken slow-cooked in spicy Andhra gravy & gingelly oil.',
+      variants: [
+        { label: '250g', price: 325 },
+        { label: '500g', price: 650 },
+        { label: '1kg', price: 1300 }
+      ]
+    },
+    {
+      id: 'chicken_bone',
+      name: 'Chicken Pickle (With Bone)',
+      cat: 'nonveg',
+      isVeg: false,
+      rating: '4.8 ★',
+      badge: 'Popular',
+      desc: 'Juicy bone-in chicken marinated in traditional spicy masala.',
+      variants: [
+        { label: '250g', price: 250 },
+        { label: '500g', price: 500 },
+        { label: '1kg', price: 1000 }
+      ]
+    },
+    {
+      id: 'gongura_chicken',
+      name: 'Gongura Chicken Pickle',
+      cat: 'nonveg',
+      isVeg: false,
+      rating: '4.9 ★',
+      badge: 'Amma Special',
+      desc: 'Sour sorrel gongura leaves blended with chicken pickle spices.',
+      variants: [
+        { label: '250g', price: 350 },
+        { label: '500g', price: 700 },
+        { label: '1kg', price: 1400 }
+      ]
+    },
+    {
+      id: 'prawns_pickle',
+      name: 'Prawns Pickle',
+      cat: 'nonveg',
+      isVeg: false,
+      rating: '5.0 ★',
+      badge: 'Premium',
+      desc: 'Fresh fried prawns in garlic, red chilli & lemon gravy.',
+      variants: [
+        { label: '250g', price: 450 },
+        { label: '500g', price: 900 },
+        { label: '1kg', price: 1800 }
+      ]
+    },
+
+    // --- VEG PICKLES ---
+    {
+      id: 'kakarakaya_pickle',
+      name: 'Kakarkaya Bitter Gourd Pickle',
+      cat: 'veg',
+      isVeg: true,
+      rating: '4.8 ★',
+      badge: 'Healthy',
+      desc: 'Bitter gourd balanced with jaggery, tamarind & red chilli.',
+      variants: [
+        { label: '125g', price: 80 },
+        { label: '250g', price: 160 },
+        { label: '500g', price: 320 },
+        { label: '1kg', price: 640 }
+      ]
+    },
+    {
+      id: 'tomato_pickle',
+      name: 'Tomato Pickle',
+      cat: 'veg',
+      isVeg: true,
+      rating: '4.7 ★',
+      badge: '',
+      desc: 'Riped tomatoes simmered with mustard, garlic & curry leaves.',
+      variants: [
+        { label: '125g', price: 81 },
+        { label: '250g', price: 162 },
+        { label: '500g', price: 325 },
+        { label: '1kg', price: 650 }
+      ]
+    },
+    {
+      id: 'gongura_veg',
+      name: 'Gongura Veg Pickle',
+      cat: 'veg',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'Classic',
+      desc: 'Authentic Andhra sorrel leaf pickle ground with garlic & spices.',
+      variants: [
+        { label: '125g', price: 80 },
+        { label: '250g', price: 150 },
+        { label: '500g', price: 300 },
+        { label: '1kg', price: 599 }
+      ]
+    },
+
+    // --- SNACKS & LADDUS ---
+    {
+      id: 'dryfruit_laddu',
+      name: 'Dry Fruits Laddu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '5.0 ★',
+      badge: 'Superfood',
+      desc: 'Rich dates, cashews, almonds & pistachios bound in cow ghee.',
+      variants: [
+        { label: '125g', price: 125 },
+        { label: '250g', price: 250 },
+        { label: '500g', price: 500 },
+        { label: '1kg', price: 1000 }
+      ]
+    },
+    {
+      id: 'ragi_laddu',
+      name: 'Ragi Ghee Laddu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.8 ★',
+      badge: 'Healthy',
+      desc: 'Finger millet flour roasted in pure ghee and organic jaggery.',
+      variants: [
+        { label: '125g', price: 86 },
+        { label: '250g', price: 172 },
+        { label: '500g', price: 325 },
+        { label: '1kg', price: 650 }
+      ]
+    },
+    {
+      id: 'bellam_gavvalu',
+      name: 'Bellam Gavvalu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.7 ★',
+      badge: 'Traditional',
+      desc: 'Sweet shell-shaped flour snacks coated in jaggery syrup.',
+      variants: [
+        { label: '125g', price: 75 },
+        { label: '250g', price: 130 },
+        { label: '500g', price: 260 },
+        { label: '1kg', price: 520 }
+      ]
+    },
+    {
+      id: 'nuvvulu_laddu',
+      name: 'Nuvvulu (Sesame) Laddu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.7 ★',
+      badge: '',
+      desc: 'Roasted white sesame seeds rolled in palm jaggery.',
+      variants: [
+        { label: '250g', price: 130 },
+        { label: '500g', price: 260 },
+        { label: '1kg', price: 520 }
+      ]
+    },
+    {
+      id: 'kobbari_laddu',
+      name: 'Kobbari (Coconut) Laddu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.8 ★',
+      badge: '',
+      desc: 'Freshly grated coconut cooked in cardamom jaggery syrup.',
+      variants: [
+        { label: '250g', price: 150 },
+        { label: '500g', price: 300 },
+        { label: '1kg', price: 600 }
+      ]
+    },
+    {
+      id: 'ariselu_oil',
+      name: 'Ariselu (Oil Made)',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.6 ★',
+      badge: '',
+      desc: 'Festive rice flour & jaggery discs fried in pure oil.',
+      variants: [
+        { label: '250g', price: 125 },
+        { label: '500g', price: 250 },
+        { label: '1kg', price: 500 }
+      ]
+    },
+    {
+      id: 'ghee_ariselu',
+      name: 'Ghee Ariselu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'Rich Festive',
+      desc: 'Authentic jaggery ariselu fried in pure cow ghee.',
+      variants: [
+        { label: '250g', price: 162 },
+        { label: '500g', price: 325 },
+        { label: '1kg', price: 600 }
+      ]
+    },
+    {
+      id: 'chalimidi',
+      name: 'Chalimidi',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.7 ★',
+      badge: '',
+      desc: 'Soft rice flour & coconut sweet prepared for traditional occasions.',
+      variants: [
+        { label: '500g', price: 250 },
+        { label: '1kg', price: 450 }
+      ]
+    },
+    {
+      id: 'ragi_murukkullu',
+      name: 'Ragi Murukullu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.8 ★',
+      badge: 'Crunchy',
+      desc: 'Spicy, crunchy finger millet chakli / murukku snack.',
+      variants: [
+        { label: '100g', price: 40 },
+        { label: '250g', price: 125 },
+        { label: '500g', price: 250 }
+      ]
+    },
+    {
+      id: 'cashew_masala',
+      name: 'Masala Fried Cashews',
+      cat: 'snack',
+      isVeg: true,
+      rating: '5.0 ★',
+      badge: 'Bestseller',
+      desc: 'Premium whole cashews roasted in ghee & tossed in red chilli masala.',
+      variants: [
+        { label: '250g', price: 225 },
+        { label: '500g', price: 450 },
+        { label: '1kg', price: 900 }
+      ]
+    },
+
+    // --- SPICES ---
+    {
+      id: 'garam_masala',
+      name: 'Home Garam Masala Powder',
+      cat: 'spice',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'Pure',
+      desc: 'Aromatic hand-ground whole spice blend for curry & pickles.',
+      variants: [
+        { label: '100g', price: 100 },
+        { label: '250g', price: 250 },
+        { label: '500g', price: 500 }
+      ]
+    },
+    {
+      id: 'chilli_powder',
+      name: 'Andhra Red Chilli Powder',
+      cat: 'spice',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'Fiery',
+      desc: 'Sun-dried Guntur red chillies finely stone-ground.',
+      variants: [
+        { label: '250g', price: 125 },
+        { label: '500g', price: 250 }
+      ]
+    },
+    {
+      id: 'turmeric_powder',
+      name: 'Pure Turmeric Powder',
+      cat: 'spice',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'Organic',
+      desc: '100% natural turmeric root powder with high curcumin content.',
+      variants: [
+        { label: '250g', price: 100 },
+        { label: '500g', price: 200 }
+      ]
+    }
   ];
 
   let selectedVariants = {};
@@ -571,7 +855,7 @@
   let drawerStep = 1;
   let createdOid = '';
 
-  FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 1);
+  FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 0); // default to first variant
 
   // Live Instant Search Popup & Input Handler
   function handleSearchInput() {
@@ -595,7 +879,7 @@
 
       if (matches.length > 0) {
         popupResults.innerHTML = matches.map(item => {
-          const defaultVar = item.variants[1] || item.variants[0];
+          const defaultVar = item.variants[0];
           return `
             <div class="search-popup-item" onclick="selectSearchItem('${item.id}')">
               <div class="search-item-info">
@@ -656,7 +940,7 @@
   function quickAddFromSearch(itemId) {
     const item = FOOD_ITEMS.find(i => i.id === itemId);
     if (!item) return;
-    const curVar = item.variants[1] || item.variants[0];
+    const curVar = item.variants[0];
     const cartKey = `${item.id}_${curVar.label}`;
     updateCart(cartKey, item.name, curVar.label, curVar.price, 1);
     closeSearchPopup();
@@ -693,7 +977,7 @@
         <div style="grid-column: 1 / -1; text-align:center; padding:40px; background:#fff; border-radius:16px; border:1px solid var(--border-color);">
           <div style="font-size:2.5rem; margin-bottom:8px;">🔍</div>
           <h3>No items found matching "${escapeHtml(search)}"</h3>
-          <p style="color:#666; font-size:0.9rem; margin:8px 0 16px;">Try searching for "chicken", "mango", "gongura", or "laddu"</p>
+          <p style="color:#666; font-size:0.9rem; margin:8px 0 16px;">Try searching for "chicken", "mango", "ariselu", or "garam masala"</p>
           <button onclick="clearSearch()" style="background:var(--maroon); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">Clear Search</button>
         </div>
       `;
@@ -701,7 +985,7 @@
     }
 
     grid.innerHTML = filtered.map(item => {
-      const varIdx = selectedVariants[item.id];
+      const varIdx = selectedVariants[item.id] || 0;
       const curVar = item.variants[varIdx];
       const cartKey = `${item.id}_${curVar.label}`;
       const qty = cart[cartKey] ? cart[cartKey].qty : 0;

@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sri Meenakshi Express — Food Store, GPS Location &amp; Live Search</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #f9f4ec;
+    --paper: #ffffff;
+    --ink: #1f140e;
+    --maroon: #5c2413;
+    --rust: #d94e1b;
+    --rust-dark: #ad390f;
+    --turmeric: #e69d25;
+    --leaf: #388e3c;
+    --leaf-dark: #2e7d32;
+    --brass: #b8860b;
+    --gray-bg: #f4ede2;
+    --border-color: rgba(92,36,19,0.12);
+    --shadow: 0 8px 24px rgba(43,24,16,0.12);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.5;
+    padding-bottom:90px;
+  }
+
+  h1,h2,h3,h4{font-family:'Fraunces', serif; color:var(--maroon);}
+  a{color:inherit; text-decoration:none;}
+
+  .wrap{max-width:1160px; margin:0 auto; padding:0 20px;}
+
+  /* Active Order Bar */
+  .active-order-bar{
+    display:none; background:var(--turmeric); color:var(--ink); font-weight:700;
+    padding:8px 20px; font-size:0.88rem; text-align:center; cursor:pointer;
+  }
+  .active-order-bar:hover{background:#ffb300;}
+
+  /* Header */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:linear-gradient(180deg, var(--maroon) 0%, #42180c 100%);
+    color:var(--cream); border-bottom:3px solid var(--turmeric);
+    box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 20px; max-width:1160px; margin:0 auto; gap:16px;
+  }
+  .brand{display:flex; align-items:center; gap:12px; cursor:pointer;}
+  .seal{
+    width:46px; height:46px; border-radius:50%;
+    background:radial-gradient(circle, var(--rust), var(--maroon));
+    border:2px solid var(--turmeric); display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:900; color:var(--cream); font-size:1.05rem; flex-shrink:0;
+  }
+  .brand-text .name{font-family:'Fraunces', serif; font-weight:700; font-size:1.2rem; color:#fff;}
+  .brand-text .tag{font-family:'Caveat', cursive; color:var(--turmeric); font-size:0.92rem;}
+
+  /* Location Bar */
+  .loc-bar{
+    display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15);
+    padding:7px 16px; border-radius:20px; font-size:0.85rem; cursor:pointer; border:1px solid rgba(255,255,255,0.25);
+    transition:all 0.2s; max-width:300px;
+  }
+  .loc-bar:hover{background:rgba(255,255,255,0.25);}
+  .loc-bar svg{width:18px; height:18px; color:var(--turmeric); flex-shrink:0;}
+  .loc-text{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+
+  /* Search Box Input & Live Dropdown Popup */
+  .search-box{flex:1; max-width:340px; position:relative;}
+  .search-box input{
+    width:100%; padding:10px 36px 10px 38px; border-radius:20px; border:2px solid transparent;
+    background:#ffffff !important; color:#1f140e !important; font-size:0.9rem; font-family:'Work Sans', sans-serif;
+    box-shadow:0 2px 8px rgba(0,0,0,0.15); outline:none; transition:border 0.2s; font-weight:600;
+  }
+  .search-box input::placeholder{color:#777; font-weight:400;}
+  .search-box input:focus{border-color:var(--turmeric);}
+  .search-box svg{position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; color:var(--maroon); z-index:2;}
+  
+  .clear-search{
+    position:absolute; right:12px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:#888; font-size:1.2rem; cursor:pointer; display:none; z-index:2;
+  }
+
+  /* Live Search Suggestions Popup */
+  .search-popup{
+    display:none; position:absolute; top:calc(100% + 8px); left:0; right:0;
+    background:#ffffff; color:var(--ink); border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,0.25);
+    border:1px solid var(--border-color); z-index:150; overflow:hidden; animation:fadeInDown 0.2s ease;
+  }
+  .search-popup.show{display:block;}
+  @keyframes fadeInDown{from{opacity:0; transform:translateY(-8px);} to{opacity:1; transform:translateY(0);}}
+
+  .search-popup-head{
+    padding:10px 14px; background:var(--gray-bg); font-size:0.78rem; font-weight:700; color:var(--maroon);
+    border-bottom:1px solid var(--border-color); text-transform:uppercase; letter-spacing:0.5px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .search-popup-results{max-height:320px; overflow-y:auto;}
+  .search-popup-item{
+    display:flex; align-items:center; justify-content:space-between; padding:12px 14px;
+    border-bottom:1px solid rgba(0,0,0,0.06); cursor:pointer; transition:background 0.15s;
+  }
+  .search-popup-item:hover{background:#fdf6ed;}
+  .search-popup-item:last-child{border-bottom:none;}
+  .search-item-info{display:flex; align-items:center; gap:10px;}
+  .search-item-icon{
+    width:34px; height:34px; border-radius:8px; background:#fcedd7;
+    display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:700; color:var(--maroon);
+  }
+  .search-item-title{font-weight:700; font-size:0.9rem;}
+  .search-item-cat{font-size:0.75rem; color:#777;}
+  .search-item-price{font-weight:700; color:var(--rust); font-size:0.88rem;}
+  
+  .quick-add-btn{
+    background:var(--leaf); color:#fff; border:none; padding:5px 12px; border-radius:12px;
+    font-size:0.75rem; font-weight:700; cursor:pointer;
+  }
+  .quick-add-btn:hover{background:var(--leaf-dark);}
+
+  .nav-right{display:flex; align-items:center; gap:14px;}
+  .nav-link{font-weight:600; font-size:0.88rem; color:var(--cream); cursor:pointer; display:flex; align-items:center; gap:5px;}
+  .nav-link:hover{color:var(--turmeric);}
+
+  /* User Menu */
+  .user-menu-wrap{position:relative;}
+  .user-btn{
+    background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.25);
+    padding:6px 14px; border-radius:20px; font-weight:700; font-size:0.85rem; cursor:pointer;
+    display:flex; align-items:center; gap:6px;
+  }
+  .user-dropdown{
+    display:none; position:absolute; right:0; top:40px; background:#fff; color:var(--ink);
+    border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.2); width:180px; overflow:hidden; z-index:110;
+  }
+  .user-dropdown.show{display:block;}
+  .dropdown-item{padding:10px 16px; font-size:0.88rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;}
+  .dropdown-item:hover{background:var(--gray-bg);}
+
+  .cart-btn-head{
+    background:var(--rust); color:#fff; padding:8px 16px; border-radius:20px;
+    font-weight:700; font-size:0.88rem; display:flex; align-items:center; gap:8px;
+    border:none; cursor:pointer;
+  }
+  .cart-count-badge{background:#fff; color:var(--rust); font-size:0.78rem; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;}
+
+  /* Hero Section */
+  .hero-section{background:linear-gradient(135deg, #fff6e8, #fce8d5); border-bottom:1px solid var(--border-color); padding:32px 0;}
+  .hero-inner{display:grid; grid-template-columns:1.1fr 0.9fr; gap:30px; align-items:center;}
+  .hero-text h1{font-size:2.4rem; line-height:1.15; margin-bottom:10px;}
+  .hero-text h1 em{color:var(--rust); font-style:normal;}
+  .hero-text p{color:#6c4b37; font-size:1rem; margin-bottom:18px;}
+  .hero-actions{display:flex; gap:12px; flex-wrap:wrap;}
+  .btn{padding:12px 24px; border-radius:24px; font-weight:700; font-size:0.9rem; border:none; cursor:pointer;}
+  .btn-primary{background:var(--rust); color:#fff;}
+  .btn-secondary{background:var(--maroon); color:#fff;}
+
+  /* Sticky Category Filters */
+  .sticky-filters{position:sticky; top:73px; z-index:90; background:var(--paper); border-bottom:1px solid var(--border-color); padding:14px 0;}
+  .filters-inner{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;}
+  .cats-scroll{display:flex; gap:10px; overflow-x:auto;}
+  .cat-pill{
+    background:var(--gray-bg); border:1px solid var(--border-color); color:var(--ink);
+    padding:8px 18px; border-radius:20px; font-weight:600; font-size:0.88rem; cursor:pointer; white-space:nowrap;
+  }
+  .cat-pill.active, .cat-pill:hover{background:var(--maroon); color:#fff;}
+
+  /* Food Grid */
+  .food-section{padding:30px 0;}
+  .food-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:22px;}
+  .food-card{
+    background:var(--paper); border-radius:16px; overflow:hidden; border:1px solid var(--border-color);
+    display:flex; flex-direction:column; justify-content:space-between; position:relative;
+  }
+  .food-img-stage{height:140px; background:linear-gradient(135deg, #fcedd7, #f7dfc0); display:flex; align-items:center; justify-content:center; position:relative;}
+  .food-badge{position:absolute; top:10px; left:10px; background:var(--rust); color:#fff; font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:6px;}
+  .veg-icon{position:absolute; top:10px; right:10px; width:18px; height:18px; border:2px solid var(--leaf); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:3px;}
+  .veg-icon::after{content:''; width:8px; height:8px; background:var(--leaf); border-radius:50%;}
+  .nonveg-icon{position:absolute; top:10px; right:10px; width:18px; height:18px; border:2px solid var(--rust); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:3px;}
+  .nonveg-icon::after{content:''; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:8px solid var(--rust);}
+
+  .food-body{padding:16px; flex:1; display:flex; flex-direction:column;}
+  .food-title{font-size:1.05rem; font-weight:700; margin-bottom:4px;}
+  .food-desc{font-size:0.83rem; color:#666; margin-bottom:12px; flex:1;}
+
+  .variant-select{display:flex; gap:6px; margin-bottom:12px;}
+  .var-btn{flex:1; border:1px solid var(--border-color); background:var(--gray-bg); padding:4px; border-radius:8px; font-size:0.76rem; font-weight:600; text-align:center; cursor:pointer;}
+  .var-btn.selected{background:var(--maroon); color:#fff;}
+
+  .food-footer{display:flex; align-items:center; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:10px; margin-top:auto;}
+  .food-price{font-family:'Fraunces', serif; font-size:1.1rem; font-weight:700; color:var(--rust);}
+
+  .add-btn-wrap{position:relative; width:100px; height:34px;}
+  .btn-add{width:100%; height:100%; background:#fff; color:var(--leaf-dark); border:1.5px solid var(--leaf); border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;}
+  .stepper{display:none; width:100%; height:100%; background:var(--leaf-dark); color:#fff; border-radius:8px; align-items:center; justify-content:space-between; padding:0 6px; font-weight:700;}
+  .stepper.active{display:flex;}
+  .stepper-btn{background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;}
+
+  /* Floating Bottom Cart Bar */
+  .cart-float-bar{
+    position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:800px; z-index:99;
+    background:linear-gradient(90deg, var(--leaf-dark), #1b5e20); color:#fff; padding:12px 20px; border-radius:14px;
+    display:none; align-items:center; justify-content:space-between;
+  }
+  .cart-float-bar.show{display:flex;}
+  .float-btn{background:var(--turmeric); color:var(--ink); font-weight:700; font-size:0.9rem; padding:8px 18px; border-radius:10px; border:none; cursor:pointer;}
+
+  /* Modals & Overlay */
+  .drawer-overlay, .modal-overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); backdrop-filter:blur(4px); z-index:200;
+    opacity:0; pointer-events:none; transition:opacity 0.3s;
+  }
+  .drawer-overlay.open, .modal-overlay.show{opacity:1; pointer-events:auto;}
+
+  .cart-drawer{
+    position:fixed; top:0; right:0; width:100%; max-width:480px; height:100%; background:var(--paper); z-index:201;
+    transform:translateX(100%); transition:transform 0.3s; display:flex; flex-direction:column;
+  }
+  .drawer-overlay.open .cart-drawer{transform:translateX(0);}
+  .drawer-head{padding:18px 20px; background:var(--maroon); color:#fff; display:flex; justify-content:space-between; align-items:center;}
+  .drawer-body{padding:20px; overflow-y:auto; flex:1;}
+  .drawer-foot{padding:16px 20px; border-top:1px solid var(--border-color); background:#fff;}
+  .action-btn-large{width:100%; background:var(--rust); color:#fff; padding:14px; border-radius:10px; font-size:1rem; font-weight:700; border:none; cursor:pointer;}
+
+  .step-tab{display:none;}
+  .step-tab.active{display:block;}
+  .cart-item-row{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--border-color);}
+
+  .modal-card{
+    background:#fff; border-radius:20px; max-width:540px; width:100%; padding:26px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; position:relative; margin:auto;
+  }
+  .modal-close{position:absolute; top:18px; right:18px; background:none; border:none; font-size:1.5rem; cursor:pointer; color:#888;}
+  .form-input{width:100%; padding:11px 14px; border-radius:8px; border:1px solid #ccc; margin-bottom:12px; font-size:0.9rem;}
+
+  /* GPS Location Selector Card */
+  .gps-detect-btn{
+    width:100%; background:linear-gradient(90deg, #1976d2, #1565c0); color:#fff; padding:14px; border-radius:12px;
+    font-weight:700; font-size:0.95rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 4px 12px rgba(25,118,210,0.3); margin-bottom:18px;
+  }
+
+  .near-loc-item{
+    background:var(--cream); border:1px solid var(--border-color); border-radius:10px; padding:12px 14px; margin-bottom:10px;
+    cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:all 0.2s;
+  }
+
+  /* Delivery Executive Partner Card */
+  .driver-card{
+    background:linear-gradient(135deg, #fce8d5, #fff6e8); border-radius:14px; padding:16px;
+    display:flex; align-items:center; justify-content:space-between; margin-top:16px; border:1px solid var(--turmeric);
+  }
+  .call-partner-btn{
+    background:var(--leaf); color:#fff; padding:8px 14px; border-radius:20px; font-size:0.82rem; font-weight:700;
+    display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+  }
+
+  footer{background:var(--ink); color:#cbb89a; padding:36px 0 20px; margin-top:50px;}
+</style>
+</head>
+<body onclick="if(!event.target.closest('.search-box')) closeSearchPopup()">
+
+<!-- Active Order Banner -->
+<div class="active-order-bar" id="activeOrderBar" onclick="openActiveOrderTracker()">
+  🛵 Active Order #<span id="activeOidSpan"></span> is in progress! Click here to Track Live →
+</div>
+
+<header>
+  <div class="nav-inner">
+    <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      <div class="seal">SM</div>
+      <div class="brand-text">
+        <div class="name">Sri Meenakshi Express</div>
+        <div class="tag">amma prematho • online store</div>
+      </div>
+    </div>
+
+    <!-- Live GPS Location Selector Bar -->
+    <div class="loc-bar" onclick="openLocationModal()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+      <div class="loc-text" id="userLocation">Deliver to: <strong>Home — Governorpet, Vijayawada</strong></div>
+    </div>
+
+    <!-- Search Input Bar & Live Suggestions Popup -->
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Search pickles, laddus, snacks..." autocomplete="off">
+      <button class="clear-search" id="clearSearchBtn" onclick="clearSearch()">&times;</button>
+
+      <!-- Live Search Suggestions Popup -->
+      <div class="search-popup" id="searchPopup">
+        <div class="search-popup-head" id="searchPopupHead">Results</div>
+        <div class="search-popup-results" id="searchPopupResults"></div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <span class="nav-link" onclick="scrollToStore()">Store</span>
+      <span class="nav-link" onclick="openYourOrdersModal()">📦 Your Orders</span>
+      <span class="nav-link" onclick="openTrackingModal()">Live Track 🛵</span>
+
+      <div class="user-menu-wrap" id="userMenuWrap">
+        <button class="user-btn" id="userNavBtn" onclick="handleUserNavClick()">
+          👤 Login / Sign Up
+        </button>
+        <div class="user-dropdown" id="userDropdown">
+          <div class="dropdown-item" onclick="openYourOrdersModal()">📦 Your Orders</div>
+          <div class="dropdown-item" onclick="openTrackingModal()">🛵 Live Track</div>
+          <div class="dropdown-item" onclick="logoutUser()" style="color:var(--rust);">🚪 Logout</div>
+        </div>
+      </div>
+
+      <button class="cart-btn-head" onclick="toggleDrawer(1)">
+        🛒 Cart <span class="cart-count-badge" id="headCartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero-section" id="home">
+  <div class="wrap hero-inner">
+    <div class="hero-text">
+      <h1>Handmade Pickles &amp; Sweets <em>amma prematho</em></h1>
+      <p>Authentic Andhra pickles and ghee-roasted laddus made fresh in Vijayawada.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="scrollToStore()">Browse Food Store 🛒</button>
+        <button class="btn btn-secondary" onclick="openYourOrdersModal()">View Your Orders 📦</button>
+      </div>
+    </div>
+    <div style="text-align:center;">
+      <svg viewBox="0 0 300 220" style="max-width:260px;">
+        <rect x="50" y="30" width="200" height="160" rx="16" fill="#f8f0de" stroke="#5c2413" stroke-width="4"/>
+        <rect x="65" y="60" width="170" height="110" rx="10" fill="#d94e1b"/>
+        <rect x="40" y="16" width="220" height="24" rx="6" fill="#b8860b"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="sticky-filters" id="store">
+  <div class="wrap filters-inner">
+    <div class="cats-scroll" id="catFilters">
+      <button class="cat-pill active" data-cat="all">All Items</button>
+      <button class="cat-pill" data-cat="nonveg">🍗 Non-Veg Pickles</button>
+      <button class="cat-pill" data-cat="veg">🌿 Veg Pickles</button>
+      <button class="cat-pill" data-cat="laddu">🍬 Laddus &amp; Sweets</button>
+    </div>
+
+    <label style="font-size:0.82rem; font-weight:700; cursor:pointer;">
+      <input type="checkbox" id="vegOnlyToggle"> Veg Only
+    </label>
+  </div>
+</div>
+
+<main class="wrap food-section">
+  <div class="food-grid" id="foodGrid"></div>
+</main>
+
+<!-- Floating Cart Bar -->
+<div class="cart-float-bar" id="cartFloatBar">
+  <div>
+    <span style="font-weight:700;" id="floatCartSummary">0 ITEMS | ₹0</span>
+  </div>
+  <button class="float-btn" onclick="toggleDrawer(1)">VIEW BASKET 🛒 →</button>
+</div>
+
+<!-- Multi-Step Cart & Checkout Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this) toggleDrawer()">
+  <div class="cart-drawer">
+    <div class="drawer-head">
+      <h3 id="drawerTitle">1. My Basket 🛒</h3>
+      <button class="close-drawer" onclick="toggleDrawer()">&times;</button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="step-tab active" id="step1">
+        <div id="cartItemsList"></div>
+
+        <div style="margin-top:16px;">
+          <label style="font-size:0.82rem; font-weight:600; color:#555;">Cooking Instructions:</label>
+          <textarea id="deliveryNote" placeholder="e.g. Extra spicy..." style="width:100%; height:55px; padding:8px; border-radius:8px; border:1px solid #ccc; font-size:0.85rem;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:8px; margin:14px 0;">
+          <input type="text" id="couponInput" placeholder="Promo Code (AMMA10)" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ccc; font-size:0.85rem;">
+          <button onclick="applyCoupon()" style="background:var(--maroon); color:#fff; border:none; padding:8px 14px; border-radius:6px; font-weight:700; cursor:pointer;">APPLY</button>
+        </div>
+
+        <div style="background:var(--cream); padding:14px; border-radius:10px; font-size:0.86rem; border:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span id="billSubtotal">₹0</span></div>
+          <div style="display:flex; justify-content:space-between; margin-top:4px;"><span>Packaging &amp; Delivery</span><span id="billDelivery">₹55</span></div>
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.05rem; border-top:1px dashed #ccc; padding-top:8px; margin-top:8px; color:var(--maroon);"><span>To Pay</span><span id="billGrandTotal">₹0</span></div>
+        </div>
+      </div>
+
+      <div class="step-tab" id="step2">
+        <h4 style="margin-bottom:10px;">Delivery Address</h4>
+        <input type="text" id="cname" class="form-input" placeholder="Full Name *">
+        <input type="tel" id="cphone" class="form-input" placeholder="10-digit Phone *">
+        <textarea id="caddress" class="form-input" placeholder="House No, Area, Landmark, City *" style="height:60px;"></textarea>
+
+        <h4 style="margin-bottom:10px;">Payment Method</h4>
+        <label style="display:block; margin-bottom:8px; font-size:0.9rem;">
+          <input type="radio" name="payRadio" value="UPI" checked> Instant UPI (GPay / PhonePe QR)
+        </label>
+        <label style="display:block; margin-bottom:8px; font-size:0.9rem;">
+          <input type="radio" name="payRadio" value="COD"> Cash on Delivery (COD)
+        </label>
+      </div>
+
+      <div class="step-tab" id="step3" style="text-align:center; padding-top:20px;">
+        <div style="width:60px; height:60px; background:var(--leaf); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 14px;">✓</div>
+        <h2>Order Received! 🎉</h2>
+        <div style="font-family:'Fraunces', serif; font-size:1.3rem; color:var(--maroon); background:var(--cream); padding:8px 16px; border-radius:10px; display:inline-block; margin:14px 0; border:1px dashed var(--brass);" id="createdOidDisplay">Order #SM10000</div>
+        <button class="action-btn-large" onclick="openLiveTrackingFromCheckout()">TRACK LIVE ORDER 🛵</button>
+      </div>
+    </div>
+
+    <div class="drawer-foot" id="drawerFoot">
+      <button class="action-btn-large" id="drawerNextBtn" onclick="nextDrawerStep()">PROCEED TO CHECKOUT ➔</button>
+    </div>
+  </div>
+</div>
+
+<!-- GPS Location & Address Selector Modal -->
+<div class="modal-overlay" id="locationModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeLocationModal()">&times;</button>
+    <h2>📍 Select Delivery Location</h2>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:14px;">Choose your delivery address or detect live GPS location.</p>
+
+    <button class="gps-detect-btn" onclick="detectGPSLocation()">
+      <span id="gpsSpinner">🎯</span> Detect Current Location (GPS)
+    </button>
+    <div id="gpsStatusMsg" style="font-size:0.82rem; color:var(--leaf); margin-top:-10px; margin-bottom:14px; font-weight:600;"></div>
+
+    <h4 style="margin-bottom:10px; color:var(--maroon);">📌 Nearby &amp; Saved Locations</h4>
+    
+    <div class="near-loc-item" onclick="selectNearLocation('Home — Door No 4-12, Governorpet, Vijayawada (520002)')">
+      <div>
+        <strong style="font-size:0.92rem;">🏠 Home</strong>
+        <div style="font-size:0.78rem; color:#666;">Door No 4-12, Governorpet, Vijayawada</div>
+      </div>
+      <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
+    </div>
+
+    <div class="near-loc-item" onclick="selectNearLocation('Work — Tech Park, Benz Circle, Vijayawada (520010)')">
+      <div>
+        <strong style="font-size:0.92rem;">🏢 Work Office</strong>
+        <div style="font-size:0.78rem; color:#666;">Tech Park, Benz Circle, Vijayawada</div>
+      </div>
+      <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
+    </div>
+
+    <div class="near-loc-item" onclick="selectNearLocation('Patamata — Near High School Road, Vijayawada (520010)')">
+      <div>
+        <strong style="font-size:0.92rem;">📍 Patamata Center</strong>
+        <div style="font-size:0.78rem; color:#666;">Near High School Road, Vijayawada</div>
+      </div>
+      <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
+    </div>
+
+    <h4 style="margin:16px 0 8px; color:var(--maroon);">Or Type Custom Address:</h4>
+    <input type="text" id="customLocInput" class="form-input" placeholder="e.g. Poranki, Penamaluru, Vijayawada - 521137">
+    <button class="action-btn-large" onclick="saveCustomLocation()" style="padding:10px;">SAVE LOCATION ➔</button>
+  </div>
+</div>
+
+<!-- User Login Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+    <h2>👤 Login to Sri Meenakshi</h2>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:16px;">Access your personal order store and saved addresses.</p>
+
+    <form onsubmit="handleAuthSubmit(event)">
+      <input type="text" id="authName" class="form-input" placeholder="Your Name" required>
+      <input type="tel" id="authPhone" class="form-input" placeholder="10-digit Mobile Number *" required pattern="[0-9]{10}">
+      <input type="password" id="authPin" class="form-input" placeholder="4-digit Security PIN" required minlength="4" maxlength="4">
+      <button type="submit" class="action-btn-large" style="margin-top:10px;">LOGIN / CONTINUE ➔</button>
+    </form>
+  </div>
+</div>
+
+<!-- "Your Orders" Modal -->
+<div class="modal-overlay" id="yourOrdersModal">
+  <div class="modal-card" style="max-width:620px;">
+    <button class="modal-close" onclick="closeYourOrdersModal()">&times;</button>
+    <h2>📦 Your Orders History</h2>
+    <p style="font-size:0.85rem; color:#666; margin-bottom:16px;" id="yourOrdersUserSubtitle">Viewing orders linked to your account.</p>
+    <div id="yourOrdersList"></div>
+  </div>
+</div>
+
+<!-- Live Order Tracking Modal -->
+<div class="modal-overlay" id="trackingModal">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeTrackingModal()">&times;</button>
+    <h2>🛵 Live Order Tracker</h2>
+
+    <div style="display:flex; gap:8px; margin:14px 0;">
+      <input type="text" id="trackOidInput" placeholder="Order ID (e.g. SM10234)" style="flex:1; padding:10px; border-radius:8px; border:1px solid #ccc;">
+      <input type="tel" id="trackPhoneInput" placeholder="Phone" style="width:120px; padding:10px; border-radius:8px; border:1px solid #ccc;">
+      <button onclick="fetchLiveOrder()" style="background:var(--rust); color:#fff; border:none; padding:10px 16px; border-radius:8px; font-weight:700; cursor:pointer;">Track</button>
+    </div>
+
+    <div id="trackingContent" style="display:none; margin-top:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #ccc; padding-bottom:12px;">
+        <div>
+          <h3 id="trackModalOid">Order #SM10000</h3>
+          <p style="font-size:0.8rem; color:#666;" id="trackModalDate">Placed Today</p>
+        </div>
+        <div style="background:#e8f5e9; color:var(--leaf-dark); padding:6px 12px; border-radius:10px; font-weight:700; font-size:0.85rem;" id="trackModalEta">ETA: 35 Mins</div>
+      </div>
+
+      <div class="timeline" id="trackModalTimeline" style="margin:20px 0;"></div>
+
+      <div class="driver-card">
+        <div>
+          <strong style="font-size:0.95rem;">👨‍🛵 Ramesh Kumar (Delivery Partner)</strong>
+          <div style="font-size:0.78rem; color:#666;">Hero Honda Activa • AP16 AB 4521</div>
+          <div style="font-size:0.82rem; font-weight:700; color:var(--maroon); margin-top:2px;">Phone: +91 98765 43210</div>
+        </div>
+        <a href="tel:+919876543210" class="call-partner-btn">📞 Call Partner</a>
+      </div>
+
+      <div style="background:var(--cream); padding:12px; border-radius:10px; font-size:0.85rem; margin-top:14px;" id="trackModalItems"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div style="display:flex; justify-content:space-between; font-size:0.85rem;">
+      <div>© 2026 Sri Meenakshi Express. All rights reserved.</div>
+      <div>WhatsApp Support: +91 76618 10326</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyUEvrv3ipopo948Nskpsxjq2SQhy4lQzWn6MHEbiY_r3CSiByJACk1t8ABd_yciRWk/exec";
+
+  const FOOD_ITEMS = [
+    { id: 'chicken_pickle', name: 'Chicken Pickle (Boneless)', cat: 'nonveg', isVeg: false, rating: '4.9 ★', badge: 'Bestseller', desc: 'Tender chicken slow-cooked in traditional Andhra spices and gingelly oil.', variants: [{ label: '250g', price: 200 }, { label: '500g', price: 380 }, { label: '1kg', price: 720 }] },
+    { id: 'gongura_chicken', name: 'Gongura Chicken Pickle', cat: 'nonveg', isVeg: false, rating: '4.8 ★', badge: 'Special', desc: 'Sour gongura leaves infused with chicken pickle spice blend.', variants: [{ label: '250g', price: 220 }, { label: '500g', price: 410 }, { label: '1kg', price: 780 }] },
+    { id: 'prawns_pickle', name: 'Prawns Pickle (Andhra Style)', cat: 'nonveg', isVeg: false, rating: '4.9 ★', badge: 'Popular', desc: 'Crispy fried prawns marinated in garlic, red chilli, and lemon.', variants: [{ label: '250g', price: 260 }, { label: '500g', price: 490 }, { label: '1kg', price: 940 }] },
+    { id: 'mango_avakaya', name: 'Avakaya Mango Pickle', cat: 'veg', isVeg: true, rating: '5.0 ★', badge: 'Must Try', desc: 'Raw cut mangoes cured with mustard powder, chilli, and oil.', variants: [{ label: '250g', price: 120 }, { label: '500g', price: 220 }, { label: '1kg', price: 400 }] },
+    { id: 'mango_thokku', name: 'Mango Thokku Pickle', cat: 'veg', isVeg: true, rating: '4.7 ★', badge: '', desc: 'Grated mango cooked down thick and spicy.', variants: [{ label: '250g', price: 100 }, { label: '500g', price: 190 }, { label: '1kg', price: 360 }] },
+    { id: 'gongura_pickle', name: 'Gongura Veg Pickle', cat: 'veg', isVeg: true, rating: '4.9 ★', badge: 'Classic', desc: 'Authentic Andhra sorrel leaf pickle.', variants: [{ label: '250g', price: 100 }, { label: '500g', price: 190 }, { label: '1kg', price: 360 }] },
+    { id: 'ragi_laddu', name: 'Ragi Ghee Laddu', cat: 'laddu', isVeg: true, rating: '4.8 ★', badge: 'Healthy', desc: 'Finger millet flour roasted in pure cow ghee.', variants: [{ label: '250g', price: 140 }, { label: '500g', price: 260 }, { label: '1kg', price: 500 }] },
+    { id: 'dryfruit_laddu', name: 'Dry Fruits Laddu', cat: 'laddu', isVeg: true, rating: '5.0 ★', badge: 'Premium', desc: 'Cashews, almonds, pistachios, dates, ghee.', variants: [{ label: '250g', price: 170 }, { label: '500g', price: 320 }, { label: '1kg', price: 620 }] }
+  ];
+
+  let selectedVariants = {};
+  let cart = JSON.parse(localStorage.getItem('sri_meenakshi_cart') || '{}');
+  let currentUser = JSON.parse(localStorage.getItem('sri_meenakshi_user') || 'null');
+  let activeCategory = 'all';
+  let vegOnly = false;
+  let appliedDiscount = 0;
+  let drawerStep = 1;
+  let createdOid = '';
+
+  FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 1);
+
+  // Live Instant Search Popup & Input Handler
+  function handleSearchInput() {
+    const searchVal = document.getElementById('searchInput').value.trim();
+    const clearBtn = document.getElementById('clearSearchBtn');
+    const popup = document.getElementById('searchPopup');
+    const popupHead = document.getElementById('searchPopupHead');
+    const popupResults = document.getElementById('searchPopupResults');
+
+    if (searchVal.length > 0) {
+      clearBtn.style.display = 'block';
+      const searchLower = searchVal.toLowerCase();
+
+      const matches = FOOD_ITEMS.filter(item => 
+        item.name.toLowerCase().includes(searchLower) ||
+        item.desc.toLowerCase().includes(searchLower) ||
+        item.cat.toLowerCase().includes(searchLower)
+      );
+
+      popupHead.textContent = `Search Results (${matches.length})`;
+
+      if (matches.length > 0) {
+        popupResults.innerHTML = matches.map(item => {
+          const defaultVar = item.variants[1] || item.variants[0];
+          return `
+            <div class="search-popup-item" onclick="selectSearchItem('${item.id}')">
+              <div class="search-item-info">
+                <div class="search-item-icon">${item.isVeg ? '🌿' : '🍗'}</div>
+                <div>
+                  <div class="search-item-title">${highlightSearchMatch(item.name, searchVal)}</div>
+                  <div class="search-item-cat">${item.cat.toUpperCase()} • ${item.rating}</div>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="search-item-price">from ₹${defaultVar.price}</div>
+                <button class="quick-add-btn" onclick="event.stopPropagation(); quickAddFromSearch('${item.id}')">ADD +</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else {
+        popupResults.innerHTML = `
+          <div style="padding:16px; text-align:center; color:#888; font-size:0.85rem;">
+            No food items found matching "<strong>${escapeHtml(searchVal)}</strong>"
+          </div>
+        `;
+      }
+
+      popup.classList.add('show');
+    } else {
+      clearBtn.style.display = 'none';
+      popup.classList.remove('show');
+    }
+
+    renderGrid();
+  }
+
+  function highlightSearchMatch(text, query) {
+    const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+    return text.replace(regex, '<mark style="background:var(--turmeric); color:var(--ink); border-radius:2px;">$1</mark>');
+  }
+
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function escapeHtml(string) {
+    return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function selectSearchItem(itemId) {
+    closeSearchPopup();
+    scrollToStore();
+    const card = document.querySelector(`.food-card[data-id="${itemId}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.style.outline = '3px solid var(--rust)';
+      setTimeout(() => card.style.outline = '', 2000);
+    }
+  }
+
+  function quickAddFromSearch(itemId) {
+    const item = FOOD_ITEMS.find(i => i.id === itemId);
+    if (!item) return;
+    const curVar = item.variants[1] || item.variants[0];
+    const cartKey = `${item.id}_${curVar.label}`;
+    updateCart(cartKey, item.name, curVar.label, curVar.price, 1);
+    closeSearchPopup();
+  }
+
+  function clearSearch() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('clearSearchBtn').style.display = 'none';
+    closeSearchPopup();
+    renderGrid();
+  }
+
+  function closeSearchPopup() {
+    document.getElementById('searchPopup').classList.remove('show');
+  }
+
+  // Food Grid Renderer
+  function renderGrid() {
+    const grid = document.getElementById('foodGrid');
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    const filtered = FOOD_ITEMS.filter(item => {
+      const matchCat = activeCategory === 'all' || item.cat === activeCategory;
+      const matchVeg = !vegOnly || item.isVeg;
+      const matchSearch = search === '' || 
+                          item.name.toLowerCase().includes(search) || 
+                          item.desc.toLowerCase().includes(search) ||
+                          item.cat.toLowerCase().includes(search);
+      return matchCat && matchVeg && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align:center; padding:40px; background:#fff; border-radius:16px; border:1px solid var(--border-color);">
+          <div style="font-size:2.5rem; margin-bottom:8px;">🔍</div>
+          <h3>No items found matching "${escapeHtml(search)}"</h3>
+          <p style="color:#666; font-size:0.9rem; margin:8px 0 16px;">Try searching for "chicken", "mango", "gongura", or "laddu"</p>
+          <button onclick="clearSearch()" style="background:var(--maroon); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">Clear Search</button>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(item => {
+      const varIdx = selectedVariants[item.id];
+      const curVar = item.variants[varIdx];
+      const cartKey = `${item.id}_${curVar.label}`;
+      const qty = cart[cartKey] ? cart[cartKey].qty : 0;
+
+      return `
+        <div class="food-card" data-id="${item.id}">
+          <div class="food-img-stage">
+            ${item.badge ? `<span class="food-badge">${item.badge}</span>` : ''}
+            <span class="${item.isVeg ? 'veg-icon' : 'nonveg-icon'}"></span>
+            <svg viewBox="0 0 100 100" width="70" height="70">
+              <rect x="25" y="25" width="50" height="50" rx="10" fill="${item.isVeg ? '#4f6b3a' : '#b5541f'}"/>
+              <text x="50" y="55" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">${item.name.split(' ')[0]}</text>
+            </svg>
+          </div>
+
+          <div class="food-body">
+            <div class="food-title">${item.name}</div>
+            <p class="food-desc">${item.desc}</p>
+
+            <div class="variant-select">
+              ${item.variants.map((v, idx) => `
+                <div class="var-btn ${idx === varIdx ? 'selected' : ''}" onclick="selectVariant('${item.id}', ${idx})">
+                  ${v.label}
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="food-footer">
+              <div class="food-price">₹${curVar.price}</div>
+              <div class="add-btn-wrap">
+                <button class="btn-add" style="display:${qty > 0 ? 'none' : 'block'}" onclick="updateCart('${cartKey}', '${item.name}', '${curVar.label}', ${curVar.price}, 1)">
+                  ADD +
+                </button>
+                <div class="stepper ${qty > 0 ? 'active' : ''}">
+                  <button class="stepper-btn" onclick="updateCart('${cartKey}', '${item.name}', '${curVar.label}', ${curVar.price}, -1)">−</button>
+                  <span class="stepper-val">${qty}</span>
+                  <button class="stepper-btn" onclick="updateCart('${cartKey}', '${item.name}', '${curVar.label}', ${curVar.price}, 1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectVariant(itemId, varIdx) {
+    selectedVariants[itemId] = varIdx;
+    renderGrid();
+  }
+
+  function updateCart(cartKey, name, variantLabel, price, delta) {
+    if (!cart[cartKey]) {
+      cart[cartKey] = { key: cartKey, name, variant: variantLabel, price, qty: 0 };
+    }
+    cart[cartKey].qty += delta;
+    if (cart[cartKey].qty <= 0) delete cart[cartKey];
+
+    localStorage.setItem('sri_meenakshi_cart', JSON.stringify(cart));
+    renderGrid();
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    let totalItems = 0;
+    let subtotal = 0;
+    Object.values(cart).forEach(i => { totalItems += i.qty; subtotal += i.price * i.qty; });
+
+    document.getElementById('headCartCount').textContent = totalItems;
+
+    const floatBar = document.getElementById('cartFloatBar');
+    if (totalItems > 0) {
+      floatBar.classList.add('show');
+      document.getElementById('floatCartSummary').textContent = `${totalItems} ITEM${totalItems > 1 ? 'S' : ''} | ₹${subtotal}`;
+    } else {
+      floatBar.classList.remove('show');
+    }
+
+    renderDrawerStep1(subtotal);
+  }
+
+  function renderDrawerStep1(subtotal) {
+    const list = document.getElementById('cartItemsList');
+    const items = Object.values(cart);
+
+    if (items.length === 0) {
+      list.innerHTML = '<div style="text-align:center; padding:30px; color:#888;">Basket is empty 🛒</div>';
+    } else {
+      list.innerHTML = items.map(i => `
+        <div class="cart-item-row">
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">${i.name}</div>
+            <div style="font-size:0.75rem; color:#666;">${i.variant} × ₹${i.price}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="add-btn-wrap" style="width:75px; height:28px;">
+              <div class="stepper active">
+                <button class="stepper-btn" onclick="updateCart('${i.key}', '${i.name}', '${i.variant}', ${i.price}, -1)">−</button>
+                <span class="stepper-val">${i.qty}</span>
+                <button class="stepper-btn" onclick="updateCart('${i.key}', '${i.name}', '${i.variant}', ${i.price}, 1)">+</button>
+              </div>
+            </div>
+            <div style="font-weight:700; color:var(--rust); font-size:0.9rem;">₹${i.price * i.qty}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const pkgFee = items.length > 0 ? 15 : 0;
+    const delFee = (subtotal >= 500 || items.length === 0) ? 0 : 40;
+    const discountAmt = Math.round(subtotal * appliedDiscount);
+    const grandTotal = Math.max(0, subtotal + pkgFee + delFee - discountAmt);
+
+    document.getElementById('billSubtotal').textContent = `₹${subtotal}`;
+    document.getElementById('billDelivery').textContent = delFee === 0 ? 'FREE' : `₹${delFee}`;
+    document.getElementById('billGrandTotal').textContent = `₹${grandTotal}`;
+  }
+
+  function applyCoupon() {
+    const code = document.getElementById('couponInput').value.trim().toUpperCase();
+    if (code === 'AMMA10') appliedDiscount = 0.10;
+    else appliedDiscount = 0;
+    updateCartUI();
+  }
+
+  // Location Selector
+  function openLocationModal() { document.getElementById('locationModal').classList.add('show'); }
+  function closeLocationModal() { document.getElementById('locationModal').classList.remove('show'); }
+
+  function detectGPSLocation() {
+    const spinner = document.getElementById('gpsSpinner');
+    const statusMsg = document.getElementById('gpsStatusMsg');
+
+    if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+
+    spinner.textContent = '⏳';
+    statusMsg.textContent = 'Fetching GPS coordinates...';
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+          const data = await res.json();
+
+          let addressStr = 'Detected GPS Location';
+          if (data && data.address) {
+            const a = data.address;
+            const road = a.road || a.suburb || a.neighbourhood || '';
+            const city = a.city || a.town || a.village || 'Vijayawada';
+            const postcode = a.postcode || '520001';
+            addressStr = `Live GPS: ${road ? road + ', ' : ''}${city} (${postcode})`;
+          } else {
+            addressStr = `Live GPS: (${lat.toFixed(4)}, ${lon.toFixed(4)}) Vijayawada`;
+          }
+
+          document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${addressStr}</strong>`;
+          document.getElementById('caddress').value = addressStr;
+          statusMsg.textContent = '✅ Location detected successfully!';
+          setTimeout(closeLocationModal, 1000);
+        } catch (err) {
+          const fallbackStr = `Live GPS: (${lat.toFixed(3)}, ${lon.toFixed(3)}) Governorpet, Vijayawada`;
+          document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${fallbackStr}</strong>`;
+          document.getElementById('caddress').value = fallbackStr;
+          statusMsg.textContent = '✅ Location detected!';
+          setTimeout(closeLocationModal, 1000);
+        } finally {
+          spinner.textContent = '🎯';
+        }
+      },
+      (err) => {
+        spinner.textContent = '🎯';
+        statusMsg.textContent = '⚠️ Could not access GPS. Please choose a nearby location below.';
+      },
+      { timeout: 10000 }
+    );
+  }
+
+  function selectNearLocation(locStr) {
+    document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${locStr}</strong>`;
+    document.getElementById('caddress').value = locStr;
+    closeLocationModal();
+  }
+
+  function saveCustomLocation() {
+    const customStr = document.getElementById('customLocInput').value.trim();
+    if (!customStr) { alert('Please enter an address.'); return; }
+    selectNearLocation(customStr);
+  }
+
+  // Auth Functions
+  function updateAuthHeaderUI() {
+    const btn = document.getElementById('userNavBtn');
+    if (currentUser && currentUser.phone) {
+      btn.innerHTML = `👤 Hi, ${currentUser.name.split(' ')[0]} ▼`;
+    } else {
+      btn.innerHTML = `👤 Login / Sign Up`;
+    }
+  }
+
+  function handleUserNavClick() {
+    if (currentUser) {
+      document.getElementById('userDropdown').classList.toggle('show');
+    } else {
+      openAuthModal();
+    }
+  }
+
+  function openAuthModal() { document.getElementById('authModal').classList.add('show'); }
+  function closeAuthModal() { document.getElementById('authModal').classList.remove('show'); }
+
+  function handleAuthSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('authName').value.trim();
+    const phone = document.getElementById('authPhone').value.trim();
+    const pin = document.getElementById('authPin').value.trim();
+
+    currentUser = { name, phone, pin };
+    localStorage.setItem('sri_meenakshi_user', JSON.stringify(currentUser));
+    updateAuthHeaderUI();
+    closeAuthModal();
+  }
+
+  function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem('sri_meenakshi_user');
+    updateAuthHeaderUI();
+    document.getElementById('userDropdown').classList.remove('show');
+  }
+
+  // Your Orders Modal
+  async function openYourOrdersModal() {
+    document.getElementById('userDropdown').classList.remove('show');
+
+    if (!currentUser || !currentUser.phone) {
+      openAuthModal();
+      return;
+    }
+
+    document.getElementById('yourOrdersUserSubtitle').textContent = `Orders for ${currentUser.name} (${currentUser.phone})`;
+    document.getElementById('yourOrdersModal').classList.add('show');
+    
+    const list = document.getElementById('yourOrdersList');
+    list.innerHTML = '<div style="text-align:center; padding:30px; color:#888;">Fetching your order history... ⏳</div>';
+
+    try {
+      const res = await fetch(`${API_URL}?action=userOrders&phone=${encodeURIComponent(currentUser.phone)}`);
+      const data = await res.json();
+
+      if (data.success && data.orders.length > 0) {
+        list.innerHTML = data.orders.map(o => `
+          <div style="background:var(--paper); border:1px solid var(--border-color); border-radius:12px; padding:14px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <strong>Order #${o.OrderID}</strong>
+              <span style="font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:10px; color:#fff; background:var(--leaf);">${o.Status || 'Placed'}</span>
+            </div>
+            <div style="font-size:0.85rem; color:#555; margin-bottom:6px;">${o.Items}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-weight:700; color:var(--rust);">₹${o.Total}</span>
+              <button onclick="openTrackingModal('${o.OrderID}', '${o.Phone}')" style="background:var(--rust); color:#fff; border:none; padding:4px 10px; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer;">Track Live 🛵</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        list.innerHTML = '<div style="text-align:center; padding:30px; color:#888;">No past orders found.</div>';
+      }
+    } catch (err) {
+      list.innerHTML = '<div style="text-align:center; padding:20px; color:red;">Could not load orders.</div>';
+    }
+  }
+
+  function closeYourOrdersModal() { document.getElementById('yourOrdersModal').classList.remove('show'); }
+
+  // Multi-step Drawer
+  function toggleDrawer(step = 1) {
+    drawerStep = step;
+    showStepTab(drawerStep);
+    if (currentUser) {
+      document.getElementById('cname').value = currentUser.name;
+      document.getElementById('cphone').value = currentUser.phone;
+    }
+    document.getElementById('drawerOverlay').classList.toggle('open');
+  }
+
+  function showStepTab(s) {
+    document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(`step${s}`).classList.add('active');
+
+    const nextBtn = document.getElementById('drawerNextBtn');
+    if (s === 1) nextBtn.textContent = 'PROCEED TO CHECKOUT ➔';
+    else if (s === 2) nextBtn.textContent = 'PLACE ORDER NOW 🛵';
+    document.getElementById('drawerFoot').style.display = s === 3 ? 'none' : 'block';
+  }
+
+  async function nextDrawerStep() {
+    if (drawerStep === 1) {
+      if (Object.keys(cart).length === 0) { alert('Your basket is empty!'); return; }
+      drawerStep = 2;
+      showStepTab(2);
+    } else if (drawerStep === 2) {
+      const name = document.getElementById('cname').value.trim();
+      const phone = document.getElementById('cphone').value.trim();
+      const address = document.getElementById('caddress').value.trim();
+      if (!name || !phone || !address) { alert('Please fill in Name, Phone, and Address.'); return; }
+
+      const items = Object.values(cart);
+      let subtotal = 0;
+      const itemsStr = items.map(i => { subtotal += i.price * i.qty; return `${i.name} (${i.variant}) x${i.qty}`; }).join(', ');
+      const totalAmount = subtotal + 15 + (subtotal >= 500 ? 0 : 40) - Math.round(subtotal * appliedDiscount);
+
+      const nextBtn = document.getElementById('drawerNextBtn');
+      nextBtn.disabled = true;
+      nextBtn.textContent = 'Submitting Order... ⏳';
+
+      try {
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            name, phone, items: itemsStr, total: totalAmount, address, paymentMode: 'COD', instructions: document.getElementById('deliveryNote').value
+          })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          createdOid = data.orderId;
+          document.getElementById('createdOidDisplay').textContent = `Order #${createdOid}`;
+          
+          localStorage.setItem('sri_meenakshi_last_oid', createdOid);
+          localStorage.setItem('sri_meenakshi_last_phone', phone);
+          checkActiveOrderBar();
+
+          cart = {};
+          localStorage.removeItem('sri_meenakshi_cart');
+          updateCartUI();
+          renderGrid();
+
+          drawerStep = 3;
+          showStepTab(3);
+        } else {
+          alert('Could not place order.');
+        }
+      } catch (err) {
+        alert('Network error.');
+      } finally {
+        nextBtn.disabled = false;
+      }
+    }
+  }
+
+  function openTrackingModal(oid = '', phone = '') {
+    if (!oid) oid = localStorage.getItem('sri_meenakshi_last_oid') || '';
+    if (!phone) phone = currentUser ? currentUser.phone : (localStorage.getItem('sri_meenakshi_last_phone') || '');
+
+    if (oid) document.getElementById('trackOidInput').value = oid;
+    if (phone) document.getElementById('trackPhoneInput').value = phone;
+
+    document.getElementById('trackingModal').classList.add('show');
+    if (oid) fetchLiveOrder();
+  }
+
+  function openLiveTrackingFromCheckout() {
+    toggleDrawer();
+    openTrackingModal(createdOid);
+  }
+
+  function closeTrackingModal() { document.getElementById('trackingModal').classList.remove('show'); }
+
+  async function fetchLiveOrder() {
+    const oid = document.getElementById('trackOidInput').value.trim();
+    const phone = document.getElementById('trackPhoneInput').value.trim();
+
+    try {
+      const res = await fetch(`${API_URL}?orderId=${encodeURIComponent(oid)}&phone=${encodeURIComponent(phone)}`);
+      const data = await res.json();
+
+      if (data.found) {
+        document.getElementById('trackModalOid').textContent = `Order #${data.order.OrderID}`;
+        document.getElementById('trackModalDate').textContent = `Placed on ${data.order.OrderDate}`;
+        document.getElementById('trackModalItems').innerHTML = `<strong>Items:</strong> ${data.order.Items}<br><strong>Total Paid:</strong> ₹${data.order.Total}`;
+
+        const stages = ['Placed', 'Preparing', 'Dispatched', 'Out for Delivery', 'Delivered'];
+        const curStatus = data.order.Status || 'Placed';
+        let curIdx = stages.findIndex(s => s.toLowerCase() === curStatus.toLowerCase());
+        if (curIdx === -1) curIdx = 0;
+
+        document.getElementById('trackModalTimeline').innerHTML = stages.map((s, idx) => `
+          <div class="timeline-step ${idx < curIdx ? 'completed' : (idx === curIdx ? 'active' : '')}">
+            <div class="step-icon">${idx < curIdx ? '✓' : idx + 1}</div>
+            <div style="font-weight:700; font-size:0.95rem;">${s}</div>
+          </div>
+        `).join('');
+
+        document.getElementById('trackingContent').style.display = 'block';
+      } else {
+        alert('Order not found.');
+      }
+    } catch (err) { alert('Tracking error.'); }
+  }
+
+  function checkActiveOrderBar() {
+    const oid = localStorage.getItem('sri_meenakshi_last_oid');
+    if (oid) {
+      document.getElementById('activeOidSpan').textContent = oid;
+      document.getElementById('activeOrderBar').style.display = 'block';
+    }
+  }
+
+  function openActiveOrderTracker() { openTrackingModal(localStorage.getItem('sri_meenakshi_last_oid')); }
+  function scrollToStore() { document.getElementById('store').scrollIntoView({ behavior: 'smooth' }); }
+
+  // Search Input & Filter Event Listeners
+  document.getElementById('searchInput').addEventListener('input', handleSearchInput);
+  document.getElementById('searchInput').addEventListener('keyup', handleSearchInput);
+  document.getElementById('searchInput').addEventListener('focus', handleSearchInput);
+
+  document.getElementById('catFilters').addEventListener('click', (e) => {
+    if (!e.target.classList.contains('cat-pill')) return;
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    e.target.classList.add('active');
+    activeCategory = e.target.dataset.cat;
+    renderGrid();
+  });
+
+  document.getElementById('vegOnlyToggle').addEventListener('change', (e) => { vegOnly = e.target.checked; renderGrid(); });
+
+  // Boot
+  updateAuthHeaderUI();
+  renderGrid();
+  updateCartUI();
+  checkActiveOrderBar();
+</script>
+</body>
+</html>

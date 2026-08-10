@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Order Tracking — Sri Meenakshi Express</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream: #f9f4ec; --paper: #ffffff; --ink: #1f140e; --maroon: #5c2413;
+    --rust: #d94e1b; --leaf: #388e3c; --leaf-dark: #2e7d32; --turmeric: #e69d25;
+    --border-color: rgba(92,36,19,0.12);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--cream); color:var(--ink); font-family:'Work Sans', sans-serif; line-height:1.5; padding-bottom:60px;}
+  h1,h2,h3,h4{font-family:'Fraunces', serif; color:var(--maroon);}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:900px; margin:0 auto; padding:0 20px;}
+
+  header{
+    background:linear-gradient(180deg, var(--maroon) 0%, #42180c 100%);
+    color:#fff; padding:14px 0; border-bottom:3px solid var(--turmeric);
+  }
+  .nav-inner{display:flex; justify-content:space-between; align-items:center;}
+  .brand{display:flex; align-items:center; gap:10px; cursor:pointer;}
+  .seal{width:40px; height:40px; border-radius:50%; background:var(--rust); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-weight:700;}
+
+  /* Search Box */
+  .lookup-card{
+    background:var(--paper); border-radius:16px; padding:24px; margin-top:24px;
+    border:1px solid var(--border-color); box-shadow:0 4px 14px rgba(0,0,0,0.05); text-align:center;
+  }
+  .form-row{display:flex; gap:10px; max-width:500px; margin:14px auto 0;}
+  .form-row input{flex:1; padding:10px 14px; border-radius:8px; border:1px solid #ccc; font-size:0.9rem;}
+  .form-row button{
+    background:var(--rust); color:#fff; border:none; padding:10px 20px; border-radius:8px;
+    font-weight:700; font-size:0.9rem; cursor:pointer;
+  }
+
+  /* Live Tracking Panel */
+  .tracking-panel{
+    display:none; background:var(--paper); border-radius:20px; padding:30px;
+    margin-top:24px; border:1px solid var(--border-color); box-shadow:0 8px 24px rgba(0,0,0,0.08);
+  }
+  .tracking-panel.show{display:block;}
+
+  .status-header{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    padding-bottom:20px; border-bottom:1px dashed var(--border-color);
+  }
+  .eta-box{
+    background:#e8f5e9; border:1px solid #a5d6a7; padding:10px 16px; border-radius:12px;
+    display:flex; align-items:center; gap:10px; color:var(--leaf-dark); font-weight:700;
+  }
+  .eta-time{font-size:1.4rem; font-family:'Fraunces', serif; color:var(--rust);}
+
+  /* Timeline */
+  .timeline{
+    margin:30px 0; position:relative; padding-left:30px;
+  }
+  .timeline::before{
+    content:''; position:absolute; left:11px; top:10px; bottom:10px; width:4px; background:#e0e0e0; border-radius:2px;
+  }
+  .timeline-step{position:relative; margin-bottom:26px;}
+  .timeline-step:last-child{margin-bottom:0;}
+  .step-icon{
+    position:absolute; left:-30px; top:2px; width:26px; height:26px; border-radius:50%;
+    background:#e0e0e0; color:#888; display:flex; align-items:center; justify-content:center;
+    font-size:0.8rem; font-weight:700; border:2px solid #fff; box-shadow:0 2px 5px rgba(0,0,0,0.1);
+  }
+  .timeline-step.completed .step-icon{background:var(--leaf); color:#fff;}
+  .timeline-step.active .step-icon{background:var(--turmeric); color:#fff; box-shadow:0 0 0 4px rgba(230,157,37,0.3);}
+  .step-title{font-weight:700; font-size:1.02rem; color:var(--maroon);}
+  .step-desc{font-size:0.84rem; color:#666; margin-top:2px;}
+
+  /* Delivery Partner Card */
+  .driver-card{
+    background:linear-gradient(135deg, #fce8d5, #fff6e8); border-radius:14px; padding:18px;
+    display:flex; align-items:center; justify-content:space-between; margin-top:24px; border:1px solid var(--turmeric);
+  }
+  .driver-info{display:flex; align-items:center; gap:14px;}
+  .driver-avatar{
+    width:52px; height:52px; border-radius:50%; background:var(--maroon); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:700;
+  }
+  .call-btn{
+    background:var(--leaf); color:#fff; padding:10px 18px; border-radius:20px;
+    font-size:0.85rem; font-weight:700; display:flex; align-items:center; gap:6px; text-decoration:none;
+  }
+
+  .order-summary-box{
+    background:var(--cream); border-radius:12px; padding:16px; margin-top:24px; border:1px solid var(--border-color);
+  }
+  .order-item-row{display:flex; justify-content:space-between; font-size:0.88rem; padding:4px 0;}
+
+  @media (max-width:600px){
+    .status-header{flex-direction:column; align-items:flex-start;}
+    .driver-card{flex-direction:column; gap:12px; text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-inner">
+    <div class="brand" onclick="window.location.href='index.html'">
+      <div class="seal">SM</div>
+      <h2 style="color:#fff; font-size:1.2rem;">Sri Meenakshi Express</h2>
+    </div>
+    <a href="index.html" style="font-size:0.85rem; font-weight:600;">← Order Food</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="lookup-card">
+    <h2>🛵 Live Order Tracking</h2>
+    <p style="font-size:0.88rem; color:#666; margin-top:4px;">Enter your Order ID and Phone Number to check live kitchen &amp; delivery status.</p>
+
+    <div class="form-row">
+      <input type="text" id="trackOid" placeholder="Order ID (e.g. SM10234)">
+      <input type="tel" id="trackPhone" placeholder="Mobile Number">
+      <button onclick="fetchTrackingData()">Track</button>
+    </div>
+  </div>
+
+  <div class="tracking-panel" id="trackingPanel">
+    <div class="status-header">
+      <div>
+        <h3 id="panelOid">Order #SM10000</h3>
+        <p style="font-size:0.82rem; color:#666;" id="panelDate">Placed on Today</p>
+      </div>
+      <div class="eta-box">
+        <div>Estimated Arrival:</div>
+        <div class="eta-time" id="etaTimer">35 Mins</div>
+      </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" id="timelineList"></div>
+
+    <!-- Delivery Executive Card with Direct Phone Number Call Button -->
+    <div class="driver-card" id="driverCard">
+      <div class="driver-info">
+        <div class="driver-avatar">👨‍🛵</div>
+        <div>
+          <div style="font-weight:700; font-size:1rem;">Ramesh Kumar (Delivery Executive)</div>
+          <div style="font-size:0.8rem; color:#666;">Hero Honda Activa • AP16 AB 4521</div>
+          <div style="font-size:0.85rem; font-weight:700; color:var(--maroon); margin-top:3px;">Direct Mobile: +91 98765 43210</div>
+        </div>
+      </div>
+      <a href="tel:+919876543210" class="call-btn">📞 Call Delivery Executive (+91 98765 43210)</a>
+    </div>
+
+    <!-- Order Items Summary -->
+    <div class="order-summary-box">
+      <h4 style="margin-bottom:10px;">Item Breakdown</h4>
+      <div id="summaryItems"></div>
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.05rem; border-top:1px dashed #ccc; padding-top:10px; margin-top:10px; color:var(--rust);">
+        <span>Total Paid</span>
+        <span id="summaryTotal">₹0</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyUEvrv3ipopo948Nskpsxjq2SQhy4lQzWn6MHEbiY_r3CSiByJACk1t8ABd_yciRWk/exec";
+
+  const STAGES = [
+    { name: 'Placed', title: 'Order Placed & Confirmed', desc: 'We have received your order details.' },
+    { name: 'Preparing', title: 'Kitchen Preparing Your Order 🍳', desc: 'Amma is packing your fresh pickles and laddus.' },
+    { name: 'Dispatched', title: 'Handed to Delivery Executive 📦', desc: 'Parcel sealed and ready for dispatch.' },
+    { name: 'Out for Delivery', title: 'Out for Delivery 🛵', desc: 'Ramesh is on the way to your delivery address.' },
+    { name: 'Delivered', title: 'Delivered 🎉', desc: 'Order delivered successfully. Enjoy!' }
+  ];
+
+  let pollInterval = null;
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const oid = params.get('oid');
+    const phone = params.get('phone');
+
+    if (oid) document.getElementById('trackOid').value = oid;
+    if (phone) document.getElementById('trackPhone').value = phone;
+
+    if (oid) {
+      fetchTrackingData();
+    }
+  });
+
+  async function fetchTrackingData() {
+    const oid = document.getElementById('trackOid').value.trim();
+    const phone = document.getElementById('trackPhone').value.trim();
+
+    if (!oid) { alert('Please enter your Order ID.'); return; }
+
+    try {
+      const res = await fetch(`${API_URL}?orderId=${encodeURIComponent(oid)}&phone=${encodeURIComponent(phone)}`);
+      const data = await res.json();
+
+      if (data.found) {
+        renderTrackingView(data.order);
+        document.getElementById('trackingPanel').classList.add('show');
+
+        if (!pollInterval) {
+          pollInterval = setInterval(fetchTrackingData, 10000);
+        }
+      } else {
+        alert('No order found matching ID #' + oid + '.');
+      }
+    } catch (err) {
+      alert('Error fetching order status.');
+    }
+  }
+
+  function renderTrackingView(order) {
+    document.getElementById('panelOid').textContent = `Order #${order.OrderID}`;
+    document.getElementById('panelDate').textContent = `Placed on ${order.OrderDate}`;
+
+    const currentStatus = order.Status || 'Placed';
+    let currentIdx = STAGES.findIndex(s => s.name.toLowerCase() === currentStatus.toLowerCase());
+    if (currentIdx === -1) currentIdx = 0;
+
+    const etaText = currentStatus === 'Delivered' ? 'Delivered!' : (currentStatus === 'Out for Delivery' ? '15 Mins' : '30-45 Mins');
+    document.getElementById('etaTimer').textContent = etaText;
+
+    const timeline = document.getElementById('timelineList');
+    timeline.innerHTML = STAGES.map((s, idx) => {
+      let cls = '';
+      if (idx < currentIdx) cls = 'completed';
+      else if (idx === currentIdx) cls = 'active';
+
+      return `
+        <div class="timeline-step ${cls}">
+          <div class="step-icon">${idx < currentIdx ? '✓' : idx + 1}</div>
+          <div class="step-title">${s.title}</div>
+          <div class="step-desc">${s.desc}</div>
+        </div>
+      `;
+    }).join('');
+
+    const driverCard = document.getElementById('driverCard');
+    if (currentStatus === 'Out for Delivery' || currentStatus === 'Dispatched') {
+      driverCard.style.display = 'flex';
+    } else {
+      driverCard.style.display = 'none';
+    }
+
+    const itemsWrap = document.getElementById('summaryItems');
+    const itemsArr = String(order.Items || '').split(',').map(i => i.trim());
+    itemsWrap.innerHTML = itemsArr.map(item => `
+      <div class="order-item-row">
+        <span>${item}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('summaryTotal').textContent = `₹${order.Total || 0}`;
+  }
+</script>
+</body>
+</html>

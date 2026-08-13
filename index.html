@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Sri Meenakshi Foods — Amma Prematho Homemade Foods &amp; Pickles</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -1199,17 +1202,21 @@
     selectedLocationStr = locStr;
     localStorage.setItem('sri_meenakshi_loc', locStr);
     document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${locStr}</strong>`;
-    document.getElementById('checkoutLocBadge').textContent = locStr;
+    const badge = document.getElementById('checkoutLocBadge');
+    if (badge) badge.textContent = locStr;
   }
 
   function detectGPSLocation() {
     const spinner = document.getElementById('gpsSpinner');
     const statusMsg = document.getElementById('gpsStatusMsg');
 
-    if (!navigator.geolocation) { alert('Geolocation not supported.'); return; }
+    if (!navigator.geolocation) {
+      statusMsg.textContent = '⚠️ GPS not supported by browser. Please select location below.';
+      return;
+    }
 
     spinner.textContent = '⏳';
-    statusMsg.textContent = 'Fetching GPS coordinates...';
+    statusMsg.textContent = 'Detecting live GPS location...';
 
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
@@ -1223,31 +1230,31 @@
           let addressStr = 'Detected GPS Location';
           if (data && data.address) {
             const a = data.address;
-            const road = a.road || a.suburb || a.neighbourhood || '';
-            const city = a.city || a.town || a.village || 'Kasibugga';
-            const postcode = a.postcode || '532222';
-            addressStr = `Live GPS: ${road ? road + ', ' : ''}${city} (${postcode})`;
+            const road = a.road || a.suburb || a.neighbourhood || a.residential || '';
+            const city = a.city || a.town || a.village || a.county || 'Kasibugga';
+            const postcode = a.postcode || '';
+            addressStr = `Live GPS: ${road ? road + ', ' : ''}${city}${postcode ? ' (' + postcode + ')' : ''}`;
           } else {
-            addressStr = `Live GPS: (${lat.toFixed(4)}, ${lon.toFixed(4)}) Kasibugga`;
+            addressStr = `Live GPS: (${lat.toFixed(4)}, ${lon.toFixed(4)})`;
           }
 
           updateLocationUI(addressStr);
-          statusMsg.textContent = '✅ Location detected successfully!';
-          setTimeout(closeLocationModal, 1000);
+          statusMsg.textContent = '✅ Location detected: ' + addressStr;
+          setTimeout(closeLocationModal, 1200);
         } catch (err) {
           const fallbackStr = `Live GPS: (${lat.toFixed(3)}, ${lon.toFixed(3)}) Kasibugga, Srikakulam`;
           updateLocationUI(fallbackStr);
-          statusMsg.textContent = '✅ Location detected!';
-          setTimeout(closeLocationModal, 1000);
+          statusMsg.textContent = '✅ GPS Location detected!';
+          setTimeout(closeLocationModal, 1200);
         } finally {
           spinner.textContent = '🎯';
         }
       },
       (err) => {
         spinner.textContent = '🎯';
-        statusMsg.textContent = '⚠️ Could not access GPS. Please choose a nearby location below.';
+        statusMsg.textContent = '⚠️ Location access denied/prompt blocked. Please tap a location below.';
       },
-      { timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   }
 
@@ -1374,15 +1381,19 @@
     } else if (drawerStep === 2) {
       const name = document.getElementById('cname').value.trim();
       const phone = document.getElementById('cphone').value.trim();
-      const flat = document.getElementById('cflat').value.trim();
-      const landmark = document.getElementById('clandmark').value.trim();
+      
+      const flatEl = document.getElementById('cflat');
+      const addrEl = document.getElementById('caddress');
+      const flat = flatEl ? flatEl.value.trim() : (addrEl ? addrEl.value.trim() : '');
+      
+      const landmarkEl = document.getElementById('clandmark');
+      const landmark = landmarkEl ? landmarkEl.value.trim() : '';
 
       if (!name || !phone || !flat) {
-        alert('Please enter your Name, Phone Number, and House / Building Address.');
+        alert('Please enter your Name, Phone Number, and Building / House Address.');
         return;
       }
 
-      // Combine Swiggy/Zomato style address: Building + Landmark + GPS/Area
       const combinedAddress = `${flat}${landmark ? ', Near: ' + landmark : ''}, ${selectedLocationStr}`;
 
       const items = Object.values(cart);
@@ -1395,46 +1406,41 @@
       nextBtn.disabled = true;
       nextBtn.textContent = 'Submitting Order... ⏳';
 
-      // Local fallback Order ID generator (guarantees order never fails!)
       const generatedOid = 'SM' + Math.floor(10000 + Math.random() * 89999);
-      let finalOid = generatedOid;
+      createdOid = generatedOid;
 
+      // Asynchronous 100% CORS-proof Background POST to Google Apps Script
       try {
-        const res = await fetch(API_URL, {
+        fetch(API_URL, {
           method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             name, phone, items: itemsStr, total: totalAmount, address: combinedAddress, paymentMode: payMode, instructions: document.getElementById('deliveryNote').value
           })
         });
-
-        const data = await res.json();
-        if (data.success && data.orderId) {
-          finalOid = data.orderId;
-        }
       } catch (err) {
-        console.log('Backend sync warning, proceeding with order ID:', finalOid);
-      } finally {
-        createdOid = finalOid;
-        document.getElementById('createdOidDisplay').textContent = `Order #${createdOid}`;
-        
-        // Prepare instant WhatsApp receipt link for customer
-        const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOid}.\n\n📦 *Items:* ${itemsStr}\n💰 *Total:* ₹${totalAmount} (${payMode})\n👤 *Customer:* ${name} (${phone})\n📍 *Address:* ${combinedAddress}`;
-        document.getElementById('waCheckoutReceiptBtn').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
-
-        localStorage.setItem('sri_meenakshi_last_oid', createdOid);
-        localStorage.setItem('sri_meenakshi_last_phone', phone);
-        checkActiveOrderBar();
-
-        cart = {};
-        localStorage.removeItem('sri_meenakshi_cart');
-        updateCartUI();
-        renderGrid();
-
-        nextBtn.disabled = false;
-        drawerStep = 3;
-        showStepTab(3);
+        console.log('Background sync:', err);
       }
+
+      // Smoothly advance to Order Received Success Screen (Step 3)!
+      document.getElementById('createdOidDisplay').textContent = `Order #${createdOid}`;
+      
+      const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOid}.\n\n📦 *Items:* ${itemsStr}\n💰 *Total:* ₹${totalAmount} (${payMode})\n👤 *Customer:* ${name} (${phone})\n📍 *Address:* ${combinedAddress}`;
+      document.getElementById('waCheckoutReceiptBtn').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
+
+      localStorage.setItem('sri_meenakshi_last_oid', createdOid);
+      localStorage.setItem('sri_meenakshi_last_phone', phone);
+      checkActiveOrderBar();
+
+      cart = {};
+      localStorage.removeItem('sri_meenakshi_cart');
+      updateCartUI();
+      renderGrid();
+
+      nextBtn.disabled = false;
+      drawerStep = 3;
+      showStepTab(3);
     }
   }
 

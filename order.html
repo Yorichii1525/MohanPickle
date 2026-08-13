@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Checkout — Sri Meenakshi Foods</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -117,7 +120,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="cname">Full Name *</label>
-              <input type="text" id="cname" placeholder="e.g. Jagadish Bevara" required>
+              <input type="text" id="cname" placeholder="e.g. BEVARA JAGADISH" required>
             </div>
             <div class="form-group">
               <label for="cphone">Mobile Number *</label>
@@ -133,7 +136,7 @@
           <div class="form-row">
             <div class="form-group">
               <label for="clandmark">Landmark &amp; Delivery Notes</label>
-              <input type="text" id="clandmark" placeholder="Near Kommadi, Gate 2">
+              <input type="text" id="clandmark" placeholder="Near Kommadi, Vishakapatnam">
             </div>
             <div class="form-group">
               <label for="cpin">City / Area / Pincode *</label>
@@ -268,12 +271,19 @@
   async function placeFinalOrder() {
     const name = document.getElementById('cname').value.trim();
     const phone = document.getElementById('cphone').value.trim();
-    const flat = document.getElementById('cflat').value.trim();
-    const landmark = document.getElementById('clandmark').value.trim();
-    const city = document.getElementById('cpin').value.trim();
+    
+    const flatEl = document.getElementById('cflat');
+    const addrEl = document.getElementById('caddress');
+    const flat = flatEl ? flatEl.value.trim() : (addrEl ? addrEl.value.trim() : '');
+    
+    const landmarkEl = document.getElementById('clandmark');
+    const landmark = landmarkEl ? landmarkEl.value.trim() : '';
 
-    if (!name || !phone || !flat || !city) {
-      alert('Please fill in Name, Phone, Building Address, and City.');
+    const cityEl = document.getElementById('cpin');
+    const city = cityEl ? cityEl.value.trim() : '';
+
+    if (!name || !phone || !flat) {
+      alert('Please fill in Name, Phone, and Building Address.');
       return;
     }
 
@@ -288,18 +298,19 @@
     const delFee = subtotal >= 500 ? 0 : 40;
     const totalAmount = subtotal + pkgFee + delFee;
 
-    const fullAddressStr = `${flat}, ${landmark ? 'Near: ' + landmark + ', ' : ''}${city}`;
+    const fullAddressStr = `${flat}${landmark ? ', Near: ' + landmark : ''}${city ? ', ' + city : ''}`;
 
     const btn = document.getElementById('submitOrderBtn');
     btn.disabled = true;
     btn.textContent = 'Processing Order... ⏳';
 
     const fallbackOid = 'SM' + Math.floor(10000 + Math.random() * 89999);
-    let finalOid = fallbackOid;
+    createdOrderId = fallbackOid;
 
     try {
-      const res = await fetch(API_URL, {
+      fetch(API_URL, {
         method: 'POST',
+        mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({
           name: name,
@@ -311,28 +322,21 @@
           instructions: note
         })
       });
-
-      const data = await res.json();
-
-      if (data.success && data.orderId) {
-        finalOid = data.orderId;
-      }
     } catch (err) {
-      console.log('Network fallback enabled:', fallbackOid);
-    } finally {
-      createdOrderId = finalOid;
-      document.getElementById('confirmedOrderId').textContent = `Order #${createdOrderId}`;
-      
-      const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOrderId}.\nItems: ${itemsSummaryStr}\nTotal: ₹${totalAmount}\nAddress: ${fullAddressStr}`;
-      document.getElementById('waConfirmLink').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
-
-      localStorage.removeItem('sri_meenakshi_cart');
-      localStorage.removeItem('sri_meenakshi_note');
-
-      btn.disabled = false;
-      btn.textContent = 'PLACE ORDER NOW 🛵';
-      document.getElementById('confirmModal').classList.add('show');
+      console.log('Background sync:', fallbackOid);
     }
+
+    document.getElementById('confirmedOrderId').textContent = `Order #${createdOrderId}`;
+    
+    const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOrderId}.\nItems: ${itemsSummaryStr}\nTotal: ₹${totalAmount}\nAddress: ${fullAddressStr}`;
+    document.getElementById('waConfirmLink').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
+
+    localStorage.removeItem('sri_meenakshi_cart');
+    localStorage.removeItem('sri_meenakshi_note');
+
+    btn.disabled = false;
+    btn.textContent = 'PLACE ORDER NOW 🛵';
+    document.getElementById('confirmModal').classList.add('show');
   }
 
   function goToTracking() {

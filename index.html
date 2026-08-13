@@ -54,17 +54,15 @@
   }
   .nav-inner{
     display:flex; align-items:center; justify-content:space-between;
-    padding:12px 20px; max-width:1160px; margin:0 auto; gap:16px;
+    padding:10px 20px; max-width:1160px; margin:0 auto; gap:16px;
   }
   .brand{display:flex; align-items:center; gap:12px; cursor:pointer;}
-  .seal{
-    width:46px; height:46px; border-radius:50%;
-    background:radial-gradient(circle, var(--rust), var(--maroon));
-    border:2px solid var(--turmeric); display:flex; align-items:center; justify-content:center;
-    font-family:'Fraunces', serif; font-weight:900; color:var(--cream); font-size:1.05rem; flex-shrink:0;
+  .logo-img{
+    width:48px; height:48px; border-radius:50%; object-fit:cover;
+    border:2px solid var(--turmeric); box-shadow:0 2px 8px rgba(0,0,0,0.3); flex-shrink:0;
   }
-  .brand-text .name{font-family:'Fraunces', serif; font-weight:700; font-size:1.2rem; color:#fff;}
-  .brand-text .tag{font-family:'Caveat', cursive; color:var(--turmeric); font-size:0.92rem;}
+  .brand-text .name{font-family:'Fraunces', serif; font-weight:700; font-size:1.25rem; color:#fff; line-height:1.1;}
+  .brand-text .tag{font-family:'Caveat', cursive; color:var(--turmeric); font-size:0.95rem;}
 
   /* Location Bar */
   .loc-bar{
@@ -108,17 +106,16 @@
   }
   .search-popup-results{max-height:320px; overflow-y:auto;}
   .search-popup-item{
-    display:flex; align-items:center; justify-content:space-between; padding:12px 14px;
+    display:flex; align-items:center; justify-content:space-between; padding:10px 14px;
     border-bottom:1px solid rgba(0,0,0,0.06); cursor:pointer; transition:background 0.15s;
   }
   .search-popup-item:hover{background:#fdf6ed;}
   .search-popup-item:last-child{border-bottom:none;}
   .search-item-info{display:flex; align-items:center; gap:10px;}
-  .search-item-icon{
-    width:34px; height:34px; border-radius:8px; background:#fcedd7;
-    display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:700; color:var(--maroon);
+  .search-item-thumb{
+    width:42px; height:42px; border-radius:8px; object-fit:cover; border:1px solid var(--border-color);
   }
-  .search-item-title{font-weight:700; font-size:0.9rem;}
+  .search-item-title{font-weight:700; font-size:0.88rem;}
   .search-item-cat{font-size:0.75rem; color:#777;}
   .search-item-price{font-weight:700; color:var(--rust); font-size:0.88rem;}
   
@@ -155,15 +152,19 @@
   .cart-count-badge{background:#fff; color:var(--rust); font-size:0.78rem; border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center;}
 
   /* Hero Section */
-  .hero-section{background:linear-gradient(135deg, #fff6e8, #fce8d5); border-bottom:1px solid var(--border-color); padding:32px 0;}
+  .hero-section{background:linear-gradient(135deg, #fff6e8, #fce8d5); border-bottom:1px solid var(--border-color); padding:36px 0;}
   .hero-inner{display:grid; grid-template-columns:1.1fr 0.9fr; gap:30px; align-items:center;}
-  .hero-text h1{font-size:2.4rem; line-height:1.15; margin-bottom:10px;}
+  .hero-text h1{font-size:2.5rem; line-height:1.15; margin-bottom:10px;}
   .hero-text h1 em{color:var(--rust); font-style:normal;}
-  .hero-text p{color:#6c4b37; font-size:1rem; margin-bottom:18px;}
+  .hero-text p{color:#6c4b37; font-size:1.02rem; margin-bottom:18px;}
   .hero-actions{display:flex; gap:12px; flex-wrap:wrap;}
   .btn{padding:12px 24px; border-radius:24px; font-weight:700; font-size:0.9rem; border:none; cursor:pointer;}
-  .btn-primary{background:var(--rust); color:#fff;}
+  .btn-primary{background:var(--rust); color:#fff; box-shadow:0 4px 12px rgba(217,78,27,0.3);}
   .btn-secondary{background:var(--maroon); color:#fff;}
+  .hero-logo-showcase{
+    width:220px; height:220px; border-radius:50%; object-fit:cover;
+    box-shadow:0 12px 32px rgba(92,36,19,0.25); border:6px solid #fff; outline:3px solid var(--turmeric);
+  }
 
   /* Sticky Category Filters */
   .sticky-filters{position:sticky; top:73px; z-index:90; background:var(--paper); border-bottom:1px solid var(--border-color); padding:14px 0;}
@@ -175,33 +176,48 @@
   }
   .cat-pill.active, .cat-pill:hover{background:var(--maroon); color:#fff;}
 
-  /* Food Grid */
+  /* Food Grid (Swiggy / Zomato Card Design) */
   .food-section{padding:30px 0;}
-  .food-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:22px;}
+  .food-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:24px;}
   .food-card{
-    background:var(--paper); border-radius:16px; overflow:hidden; border:1px solid var(--border-color);
+    background:var(--paper); border-radius:18px; overflow:hidden; border:1px solid var(--border-color);
     display:flex; flex-direction:column; justify-content:space-between; position:relative;
+    box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:transform 0.25s ease, box-shadow 0.25s ease;
   }
-  .food-img-stage{height:140px; background:linear-gradient(135deg, #fcedd7, #f7dfc0); display:flex; align-items:center; justify-content:center; position:relative;}
-  .food-badge{position:absolute; top:10px; left:10px; background:var(--rust); color:#fff; font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:6px;}
-  .veg-icon{position:absolute; top:10px; right:10px; width:18px; height:18px; border:2px solid var(--leaf); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:3px;}
+  .food-card:hover{transform:translateY(-6px); box-shadow:var(--shadow);}
+
+  .food-img-stage{
+    height:180px; width:100%; position:relative; overflow:hidden; background:var(--gray-bg);
+  }
+  .food-card-img{
+    width:100%; height:100%; object-fit:cover; transition:transform 0.35s ease;
+  }
+  .food-card:hover .food-card-img{transform:scale(1.08);}
+
+  .food-badge{position:absolute; top:12px; left:12px; background:var(--rust); color:#fff; font-size:0.72rem; font-weight:700; padding:4px 9px; border-radius:6px; z-index:2; text-transform:uppercase;}
+  .veg-icon{position:absolute; top:12px; right:12px; width:20px; height:20px; border:2px solid var(--leaf); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:4px; z-index:2; box-shadow:0 2px 6px rgba(0,0,0,0.15);}
   .veg-icon::after{content:''; width:8px; height:8px; background:var(--leaf); border-radius:50%;}
-  .nonveg-icon{position:absolute; top:10px; right:10px; width:18px; height:18px; border:2px solid var(--rust); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:3px;}
+  .nonveg-icon{position:absolute; top:12px; right:12px; width:20px; height:20px; border:2px solid var(--rust); display:flex; align-items:center; justify-content:center; background:#fff; border-radius:4px; z-index:2; box-shadow:0 2px 6px rgba(0,0,0,0.15);}
   .nonveg-icon::after{content:''; width:0; height:0; border-left:4px solid transparent; border-right:4px solid transparent; border-bottom:8px solid var(--rust);}
 
   .food-body{padding:16px; flex:1; display:flex; flex-direction:column;}
-  .food-title{font-size:1.05rem; font-weight:700; margin-bottom:4px;}
-  .food-desc{font-size:0.83rem; color:#666; margin-bottom:12px; flex:1;}
+  .food-header{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;}
+  .food-title{font-size:1.08rem; font-weight:700; color:var(--maroon); line-height:1.25;}
+  .rating{font-size:0.78rem; font-weight:700; color:var(--leaf-dark); background:#e8f5e9; padding:2px 6px; border-radius:6px; white-space:nowrap;}
 
-  .variant-select{display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap;}
-  .var-btn{flex:1; min-width:55px; border:1px solid var(--border-color); background:var(--gray-bg); padding:4px; border-radius:8px; font-size:0.76rem; font-weight:600; text-align:center; cursor:pointer;}
-  .var-btn.selected{background:var(--maroon); color:#fff;}
+  .food-desc{font-size:0.83rem; color:#666; margin:6px 0 14px; flex:1; line-height:1.4;}
 
-  .food-footer{display:flex; align-items:center; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:10px; margin-top:auto;}
-  .food-price{font-family:'Fraunces', serif; font-size:1.1rem; font-weight:700; color:var(--rust);}
+  .variant-select{display:flex; gap:6px; margin-bottom:14px; flex-wrap:wrap;}
+  .var-btn{flex:1; min-width:55px; border:1px solid var(--border-color); background:var(--gray-bg); padding:5px 4px; border-radius:8px; font-size:0.78rem; font-weight:600; text-align:center; cursor:pointer; transition:all 0.15s;}
+  .var-btn.selected{background:var(--maroon); color:#fff; border-color:var(--maroon);}
 
-  .add-btn-wrap{position:relative; width:100px; height:34px;}
-  .btn-add{width:100%; height:100%; background:#fff; color:var(--leaf-dark); border:1.5px solid var(--leaf); border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;}
+  .food-footer{display:flex; align-items:center; justify-content:space-between; border-top:1px dashed var(--border-color); padding-top:12px; margin-top:auto;}
+  .food-price{font-family:'Fraunces', serif; font-size:1.15rem; font-weight:700; color:var(--rust);}
+
+  .add-btn-wrap{position:relative; width:104px; height:36px;}
+  .btn-add{width:100%; height:100%; background:#fff; color:var(--leaf-dark); border:1.5px solid var(--leaf); border-radius:8px; font-weight:700; font-size:0.88rem; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.08); transition:all 0.2s;}
+  .btn-add:hover{background:var(--leaf); color:#fff;}
+
   .stepper{display:none; width:100%; height:100%; background:var(--leaf-dark); color:#fff; border-radius:8px; align-items:center; justify-content:space-between; padding:0 6px; font-weight:700;}
   .stepper.active{display:flex;}
   .stepper-btn{background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;}
@@ -210,7 +226,7 @@
   .cart-float-bar{
     position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:800px; z-index:99;
     background:linear-gradient(90deg, var(--leaf-dark), #1b5e20); color:#fff; padding:12px 20px; border-radius:14px;
-    display:none; align-items:center; justify-content:space-between;
+    display:none; align-items:center; justify-content:space-between; box-shadow:0 10px 25px rgba(0,0,0,0.3);
   }
   .cart-float-bar.show{display:flex;}
   .float-btn{background:var(--turmeric); color:var(--ink); font-weight:700; font-size:0.9rem; padding:8px 18px; border-radius:10px; border:none; cursor:pointer;}
@@ -278,7 +294,7 @@
 <header>
   <div class="nav-inner">
     <div class="brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-      <div class="seal">SM</div>
+      <img src="Logo.jpeg" class="logo-img" alt="Sri Meenakshi Foods Logo">
       <div class="brand-text">
         <div class="name">Sri Meenakshi Foods</div>
         <div class="tag">amma prematho • homemade foods</div>
@@ -338,11 +354,7 @@
       </div>
     </div>
     <div style="text-align:center;">
-      <svg viewBox="0 0 300 220" style="max-width:260px;">
-        <rect x="50" y="30" width="200" height="160" rx="16" fill="#f8f0de" stroke="#5c2413" stroke-width="4"/>
-        <rect x="65" y="60" width="170" height="110" rx="10" fill="#d94e1b"/>
-        <rect x="40" y="16" width="220" height="24" rx="6" fill="#b8860b"/>
-      </svg>
+      <img src="Logo.jpeg" class="hero-logo-showcase" alt="Sri Meenakshi Foods Official Logo">
     </div>
   </div>
 </section>
@@ -552,7 +564,7 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyUEvrv3ipopo948Nskpsxjq2SQhy4lQzWn6MHEbiY_r3CSiByJACk1t8ABd_yciRWk/exec";
 
-  // Official Sri Meenakshi Foods Menu Items & Exact Rates
+  // Official Sri Meenakshi Foods Menu Items & Real Food Photos
   const FOOD_ITEMS = [
     // --- NON VEG PICKLES ---
     {
@@ -563,6 +575,7 @@
       rating: '4.9 ★',
       badge: 'Bestseller',
       desc: 'Tender boneless chicken slow-cooked in spicy Andhra gravy & gingelly oil.',
+      img: 'Chicken Pickle.jpeg',
       variants: [
         { label: '250g', price: 325 },
         { label: '500g', price: 650 },
@@ -577,6 +590,7 @@
       rating: '4.8 ★',
       badge: 'Popular',
       desc: 'Juicy bone-in chicken marinated in traditional spicy masala.',
+      img: 'Bone Chicken.jpeg',
       variants: [
         { label: '250g', price: 250 },
         { label: '500g', price: 500 },
@@ -591,6 +605,7 @@
       rating: '4.9 ★',
       badge: 'Amma Special',
       desc: 'Sour sorrel gongura leaves blended with chicken pickle spices.',
+      img: 'Gongura Chicken Pickle.jpeg',
       variants: [
         { label: '250g', price: 350 },
         { label: '500g', price: 700 },
@@ -605,6 +620,7 @@
       rating: '5.0 ★',
       badge: 'Premium',
       desc: 'Fresh fried prawns in garlic, red chilli & lemon gravy.',
+      img: 'Prawns Pickle.jpeg',
       variants: [
         { label: '250g', price: 450 },
         { label: '500g', price: 900 },
@@ -621,6 +637,7 @@
       rating: '4.8 ★',
       badge: 'Healthy',
       desc: 'Bitter gourd balanced with jaggery, tamarind & red chilli.',
+      img: 'Kakarkaya Pickle.jpeg',
       variants: [
         { label: '125g', price: 80 },
         { label: '250g', price: 160 },
@@ -636,6 +653,7 @@
       rating: '4.7 ★',
       badge: '',
       desc: 'Riped tomatoes simmered with mustard, garlic & curry leaves.',
+      img: 'Tomato Pickle.jpeg',
       variants: [
         { label: '125g', price: 81 },
         { label: '250g', price: 162 },
@@ -651,6 +669,7 @@
       rating: '4.9 ★',
       badge: 'Classic',
       desc: 'Authentic Andhra sorrel leaf pickle ground with garlic & spices.',
+      img: 'Gongura Pickle.jpeg',
       variants: [
         { label: '125g', price: 80 },
         { label: '250g', price: 150 },
@@ -668,6 +687,7 @@
       rating: '5.0 ★',
       badge: 'Superfood',
       desc: 'Rich dates, cashews, almonds & pistachios bound in cow ghee.',
+      img: 'Dry Fruits laddu.jpeg',
       variants: [
         { label: '125g', price: 125 },
         { label: '250g', price: 250 },
@@ -683,6 +703,7 @@
       rating: '4.8 ★',
       badge: 'Healthy',
       desc: 'Finger millet flour roasted in pure ghee and organic jaggery.',
+      img: 'Ragi laddu.jpeg',
       variants: [
         { label: '125g', price: 86 },
         { label: '250g', price: 172 },
@@ -698,6 +719,7 @@
       rating: '4.7 ★',
       badge: 'Traditional',
       desc: 'Sweet shell-shaped flour snacks coated in jaggery syrup.',
+      img: 'Bellam Gavvalu.jpeg',
       variants: [
         { label: '125g', price: 75 },
         { label: '250g', price: 130 },
@@ -713,6 +735,7 @@
       rating: '4.7 ★',
       badge: '',
       desc: 'Roasted white sesame seeds rolled in palm jaggery.',
+      img: 'Nuvvullu Laddu.jpeg',
       variants: [
         { label: '250g', price: 130 },
         { label: '500g', price: 260 },
@@ -727,6 +750,7 @@
       rating: '4.8 ★',
       badge: '',
       desc: 'Freshly grated coconut cooked in cardamom jaggery syrup.',
+      img: 'Kobbari Laddu.jpeg',
       variants: [
         { label: '250g', price: 150 },
         { label: '500g', price: 300 },
@@ -741,6 +765,7 @@
       rating: '4.6 ★',
       badge: '',
       desc: 'Festive rice flour & jaggery discs fried in pure oil.',
+      img: 'Ghee Arisalu.jpeg',
       variants: [
         { label: '250g', price: 125 },
         { label: '500g', price: 250 },
@@ -755,6 +780,7 @@
       rating: '4.9 ★',
       badge: 'Rich Festive',
       desc: 'Authentic jaggery ariselu fried in pure cow ghee.',
+      img: 'Ghee Arisalu.jpeg',
       variants: [
         { label: '250g', price: 162 },
         { label: '500g', price: 325 },
@@ -769,6 +795,7 @@
       rating: '4.7 ★',
       badge: '',
       desc: 'Soft rice flour & coconut sweet prepared for traditional occasions.',
+      img: 'Bellam Gavvalu.jpeg',
       variants: [
         { label: '500g', price: 250 },
         { label: '1kg', price: 450 }
@@ -782,6 +809,7 @@
       rating: '4.8 ★',
       badge: 'Crunchy',
       desc: 'Spicy, crunchy finger millet chakli / murukku snack.',
+      img: 'Ragi Murukku.jpeg',
       variants: [
         { label: '100g', price: 40 },
         { label: '250g', price: 125 },
@@ -796,6 +824,7 @@
       rating: '5.0 ★',
       badge: 'Bestseller',
       desc: 'Premium whole cashews roasted in ghee & tossed in red chilli masala.',
+      img: 'Roasted Cashew Masala.jpeg',
       variants: [
         { label: '250g', price: 225 },
         { label: '500g', price: 450 },
@@ -812,6 +841,7 @@
       rating: '4.9 ★',
       badge: 'Pure',
       desc: 'Aromatic hand-ground whole spice blend for curry & pickles.',
+      img: 'Garam Masala.jpeg',
       variants: [
         { label: '100g', price: 100 },
         { label: '250g', price: 250 },
@@ -826,6 +856,7 @@
       rating: '4.9 ★',
       badge: 'Fiery',
       desc: 'Sun-dried Guntur red chillies finely stone-ground.',
+      img: 'Chilli Powder.jpeg',
       variants: [
         { label: '250g', price: 125 },
         { label: '500g', price: 250 }
@@ -839,6 +870,7 @@
       rating: '4.9 ★',
       badge: 'Organic',
       desc: '100% natural turmeric root powder with high curcumin content.',
+      img: 'Turmeric Powder.jpeg',
       variants: [
         { label: '250g', price: 100 },
         { label: '500g', price: 200 }
@@ -855,9 +887,9 @@
   let drawerStep = 1;
   let createdOid = '';
 
-  FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 0); // default to first variant
+  FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 0);
 
-  // Live Instant Search Popup & Input Handler
+  // Live Instant Search Popup Handler
   function handleSearchInput() {
     const searchVal = document.getElementById('searchInput').value.trim();
     const clearBtn = document.getElementById('clearSearchBtn');
@@ -883,7 +915,7 @@
           return `
             <div class="search-popup-item" onclick="selectSearchItem('${item.id}')">
               <div class="search-item-info">
-                <div class="search-item-icon">${item.isVeg ? '🌿' : '🍗'}</div>
+                <img src="${item.img}" class="search-item-thumb" alt="${item.name}">
                 <div>
                   <div class="search-item-title">${highlightSearchMatch(item.name, searchVal)}</div>
                   <div class="search-item-cat">${item.cat.toUpperCase()} • ${item.rating}</div>
@@ -957,7 +989,7 @@
     document.getElementById('searchPopup').classList.remove('show');
   }
 
-  // Food Grid Renderer
+  // Food Grid Renderer (Swiggy / Zomato Photo Card Design)
   function renderGrid() {
     const grid = document.getElementById('foodGrid');
     const search = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -993,16 +1025,16 @@
       return `
         <div class="food-card" data-id="${item.id}">
           <div class="food-img-stage">
+            <img src="${item.img}" alt="${item.name}" class="food-card-img" loading="lazy">
             ${item.badge ? `<span class="food-badge">${item.badge}</span>` : ''}
             <span class="${item.isVeg ? 'veg-icon' : 'nonveg-icon'}"></span>
-            <svg viewBox="0 0 100 100" width="70" height="70">
-              <rect x="25" y="25" width="50" height="50" rx="10" fill="${item.isVeg ? '#4f6b3a' : '#b5541f'}"/>
-              <text x="50" y="55" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">${item.name.split(' ')[0]}</text>
-            </svg>
           </div>
 
           <div class="food-body">
-            <div class="food-title">${item.name}</div>
+            <div class="food-header">
+              <div class="food-title">${item.name}</div>
+              <span class="rating">${item.rating}</span>
+            </div>
             <p class="food-desc">${item.desc}</p>
 
             <div class="variant-select">

@@ -20,11 +20,11 @@
 
   header{
     background:linear-gradient(180deg, var(--maroon) 0%, #42180c 100%);
-    color:#fff; padding:14px 0; border-bottom:3px solid var(--turmeric);
+    color:#fff; padding:12px 0; border-bottom:3px solid var(--turmeric);
   }
   .nav-inner{display:flex; justify-content:space-between; align-items:center;}
   .brand{display:flex; align-items:center; gap:10px; cursor:pointer;}
-  .seal{width:40px; height:40px; border-radius:50%; background:var(--rust); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-weight:700;}
+  .logo-img{width:42px; height:42px; border-radius:50%; object-fit:cover; border:2px solid var(--turmeric);}
 
   /* Search Box */
   .lookup-card{
@@ -105,7 +105,7 @@
 <header>
   <div class="wrap nav-inner">
     <div class="brand" onclick="window.location.href='index.html'">
-      <div class="seal">SM</div>
+      <img src="Logo.jpeg" class="logo-img" alt="Sri Meenakshi Foods Logo">
       <h2 style="color:#fff; font-size:1.2rem;">Sri Meenakshi Foods</h2>
     </div>
     <a href="index.html" style="font-size:0.85rem; font-weight:600;">← Order Food</a>

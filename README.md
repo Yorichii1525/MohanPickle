@@ -1,8 +1,17 @@
 # Sri Meenakshi Foods — Official Online Food Store
 
-Homemade Non-Veg Pickles, Veg Pickles, Traditional Sweets & Pure Spices made with love (Amma Prematho) in Vijayawada.
+Homemade Non-Veg Pickles, Veg Pickles, Traditional Sweets & Pure Spices made with love (Amma Prematho) at our single-branch kitchen startup in Kasibugga.
 
-## Store Categories & Official Menu Rates
+## 📍 Single-Branch Kitchen Address
+- **Door Number:** 1-14-1-328
+- **Locality / Village:** Srinivasanagar
+- **Post Office (PO):** Kasibugga (PIN: 532222)
+- **Municipality Jurisdiction:** Palasa-Kasibugga
+- **District & State:** Srikakulam, Andhra Pradesh, India
+
+---
+
+## 📋 Store Categories & Official Menu Rates
 
 ### 🍗 Non-Veg Pickles
 - **Chicken Pickle (Boneless):** 250g - ₹325 | 500g - ₹650 | 1kg - ₹1300
@@ -36,4 +45,3 @@ Homemade Non-Veg Pickles, Veg Pickles, Traditional Sweets & Pure Spices made wit
 
 ## Contact & WhatsApp Support
 - **Phone / WhatsApp:** 7661810326 / 9059016931
-- **Location:** Vijayawada, Andhra Pradesh, India

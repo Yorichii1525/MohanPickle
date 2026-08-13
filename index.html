@@ -68,7 +68,7 @@
   .loc-bar{
     display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15);
     padding:7px 16px; border-radius:20px; font-size:0.85rem; cursor:pointer; border:1px solid rgba(255,255,255,0.25);
-    transition:all 0.2s; max-width:300px;
+    transition:all 0.2s; max-width:320px;
   }
   .loc-bar:hover{background:rgba(255,255,255,0.25);}
   .loc-bar svg{width:18px; height:18px; color:var(--turmeric); flex-shrink:0;}
@@ -156,7 +156,13 @@
   .hero-inner{display:grid; grid-template-columns:1.1fr 0.9fr; gap:30px; align-items:center;}
   .hero-text h1{font-size:2.5rem; line-height:1.15; margin-bottom:10px;}
   .hero-text h1 em{color:var(--rust); font-style:normal;}
-  .hero-text p{color:#6c4b37; font-size:1.02rem; margin-bottom:18px;}
+  .hero-text p{color:#6c4b37; font-size:1.02rem; margin-bottom:14px;}
+  
+  .store-address-badge{
+    display:inline-flex; align-items:center; gap:6px; background:rgba(92,36,19,0.08); color:var(--maroon);
+    border:1px solid rgba(92,36,19,0.2); padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:700; margin-bottom:18px;
+  }
+
   .hero-actions{display:flex; gap:12px; flex-wrap:wrap;}
   .btn{padding:12px 24px; border-radius:24px; font-weight:700; font-size:0.9rem; border:none; cursor:pointer;}
   .btn-primary{background:var(--rust); color:#fff; box-shadow:0 4px 12px rgba(217,78,27,0.3);}
@@ -297,14 +303,14 @@
       <img src="Logo.jpeg" class="logo-img" alt="Sri Meenakshi Foods Logo">
       <div class="brand-text">
         <div class="name">Sri Meenakshi Foods</div>
-        <div class="tag">amma prematho • homemade foods</div>
+        <div class="tag">amma prematho • kasibugga, srikakulam</div>
       </div>
     </div>
 
     <!-- Live GPS Location Selector Bar -->
     <div class="loc-bar" onclick="openLocationModal()">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-      <div class="loc-text" id="userLocation">Deliver to: <strong>Home — Governorpet, Vijayawada</strong></div>
+      <div class="loc-text" id="userLocation">Deliver to: <strong>Door No 1-14-1-328, Srinivasanagar, Kasibugga (532222)</strong></div>
     </div>
 
     <!-- Search Input Bar & Live Suggestions Popup -->
@@ -347,7 +353,12 @@
   <div class="wrap hero-inner">
     <div class="hero-text">
       <h1>Sri Meenakshi Foods <em>amma prematho</em></h1>
-      <p>Authentic homemade pickles, traditional sweets, festive ariselu &amp; pure spices made with love in Vijayawada.</p>
+      <p>Authentic homemade pickles, traditional sweets, festive ariselu &amp; pure spices made fresh at our single-branch kitchen startup in Kasibugga.</p>
+      
+      <div class="store-address-badge">
+        📍 <strong>Kitchen Branch:</strong> Door No: 1-14-1-328, Srinivasanagar, Kasibugga (PO), Palasa-Kasibugga, Srikakulam Dist, AP - 532222
+      </div>
+
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="scrollToStore()">Browse Food Store 🛒</button>
         <button class="btn btn-secondary" onclick="openYourOrdersModal()">View Your Orders 📦</button>
@@ -420,7 +431,7 @@
         <h4 style="margin-bottom:10px;">Delivery Address</h4>
         <input type="text" id="cname" class="form-input" placeholder="Full Name *">
         <input type="tel" id="cphone" class="form-input" placeholder="10-digit Phone *">
-        <textarea id="caddress" class="form-input" placeholder="House No, Area, Landmark, City *" style="height:60px;"></textarea>
+        <textarea id="caddress" class="form-input" placeholder="Door No, Street / Area, Kasibugga / Palasa / City *" style="height:65px;"></textarea>
 
         <h4 style="margin-bottom:10px;">Payment Method</h4>
         <label style="display:block; margin-bottom:8px; font-size:0.9rem;">
@@ -457,34 +468,34 @@
     </button>
     <div id="gpsStatusMsg" style="font-size:0.82rem; color:var(--leaf); margin-top:-10px; margin-bottom:14px; font-weight:600;"></div>
 
-    <h4 style="margin-bottom:10px; color:var(--maroon);">📌 Nearby &amp; Saved Locations</h4>
+    <h4 style="margin-bottom:10px; color:var(--maroon);">📌 Kitchen Startup Branch &amp; Saved Locations</h4>
     
-    <div class="near-loc-item" onclick="selectNearLocation('Home — Door No 4-12, Governorpet, Vijayawada (520002)')">
+    <div class="near-loc-item" onclick="selectNearLocation('Store Branch — Door No 1-14-1-328, Srinivasanagar, Kasibugga PO, Palasa-Kasibugga (532222)')">
       <div>
-        <strong style="font-size:0.92rem;">🏠 Home</strong>
-        <div style="font-size:0.78rem; color:#666;">Door No 4-12, Governorpet, Vijayawada</div>
+        <strong style="font-size:0.92rem;">🏠 Kitchen Branch (Srinivasanagar)</strong>
+        <div style="font-size:0.78rem; color:#666;">Door No 1-14-1-328, Kasibugga PO, Palasa-Kasibugga, Srikakulam</div>
       </div>
       <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
     </div>
 
-    <div class="near-loc-item" onclick="selectNearLocation('Work — Tech Park, Benz Circle, Vijayawada (520010)')">
+    <div class="near-loc-item" onclick="selectNearLocation('Kasibugga Center — Near Post Office, Kasibugga (532222)')">
       <div>
-        <strong style="font-size:0.92rem;">🏢 Work Office</strong>
-        <div style="font-size:0.78rem; color:#666;">Tech Park, Benz Circle, Vijayawada</div>
+        <strong style="font-size:0.92rem;">📍 Kasibugga Center</strong>
+        <div style="font-size:0.78rem; color:#666;">Near Post Office, Kasibugga, Srikakulam</div>
       </div>
       <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
     </div>
 
-    <div class="near-loc-item" onclick="selectNearLocation('Patamata — Near High School Road, Vijayawada (520010)')">
+    <div class="near-loc-item" onclick="selectNearLocation('Palasa Main Road — Near Bus Stand, Palasa-Kasibugga (532222)')">
       <div>
-        <strong style="font-size:0.92rem;">📍 Patamata Center</strong>
-        <div style="font-size:0.78rem; color:#666;">Near High School Road, Vijayawada</div>
+        <strong style="font-size:0.92rem;">🚌 Palasa Bus Stand Area</strong>
+        <div style="font-size:0.78rem; color:#666;">Main Road, Palasa-Kasibugga, Srikakulam</div>
       </div>
       <span style="color:var(--rust); font-weight:700; font-size:0.85rem;">Select</span>
     </div>
 
     <h4 style="margin:16px 0 8px; color:var(--maroon);">Or Type Custom Address:</h4>
-    <input type="text" id="customLocInput" class="form-input" placeholder="e.g. Poranki, Penamaluru, Vijayawada - 521137">
+    <input type="text" id="customLocInput" class="form-input" placeholder="e.g. Door No 1-14-1-328, Srinivasanagar, Kasibugga - 532222">
     <button class="action-btn-large" onclick="saveCustomLocation()" style="padding:10px;">SAVE LOCATION ➔</button>
   </div>
 </div>
@@ -554,9 +565,18 @@
 
 <footer>
   <div class="wrap">
-    <div style="display:flex; justify-content:space-between; font-size:0.85rem; flex-wrap:wrap; gap:10px;">
-      <div>© 2026 Sri Meenakshi Foods. All rights reserved.</div>
-      <div>WhatsApp Support: 7661810326 / 9059016931</div>
+    <div style="display:flex; justify-content:space-between; font-size:0.85rem; flex-wrap:wrap; gap:12px; align-items:center;">
+      <div>
+        <strong>Sri Meenakshi Foods (Single Branch Startup)</strong><br>
+        📍 Door No: 1-14-1-328, Srinivasanagar, Kasibugga PO (PIN: 532222), Palasa-Kasibugga, Srikakulam Dist, Andhra Pradesh
+      </div>
+      <div>
+        <strong>WhatsApp / Call Support:</strong><br>
+        📞 7661810326 / 9059016931
+      </div>
+    </div>
+    <div style="text-align:center; font-size:0.78rem; border-top:1px solid rgba(255,255,255,0.1); margin-top:16px; padding-top:12px; color:#aaa;">
+      © 2026 Sri Meenakshi Foods. All rights reserved.
     </div>
   </div>
 </footer>
@@ -1169,11 +1189,11 @@
           if (data && data.address) {
             const a = data.address;
             const road = a.road || a.suburb || a.neighbourhood || '';
-            const city = a.city || a.town || a.village || 'Vijayawada';
-            const postcode = a.postcode || '520001';
+            const city = a.city || a.town || a.village || 'Kasibugga';
+            const postcode = a.postcode || '532222';
             addressStr = `Live GPS: ${road ? road + ', ' : ''}${city} (${postcode})`;
           } else {
-            addressStr = `Live GPS: (${lat.toFixed(4)}, ${lon.toFixed(4)}) Vijayawada`;
+            addressStr = `Live GPS: (${lat.toFixed(4)}, ${lon.toFixed(4)}) Kasibugga`;
           }
 
           document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${addressStr}</strong>`;
@@ -1181,7 +1201,7 @@
           statusMsg.textContent = '✅ Location detected successfully!';
           setTimeout(closeLocationModal, 1000);
         } catch (err) {
-          const fallbackStr = `Live GPS: (${lat.toFixed(3)}, ${lon.toFixed(3)}) Governorpet, Vijayawada`;
+          const fallbackStr = `Live GPS: (${lat.toFixed(3)}, ${lon.toFixed(3)}) Kasibugga, Srikakulam`;
           document.getElementById('userLocation').innerHTML = `Deliver to: <strong>${fallbackStr}</strong>`;
           document.getElementById('caddress').value = fallbackStr;
           statusMsg.textContent = '✅ Location detected!';

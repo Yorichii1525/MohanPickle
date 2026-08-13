@@ -26,8 +26,24 @@
     background:var(--rust); color:#fff; border:none; padding:11px 22px; border-radius:24px; font-weight:600; cursor:pointer; width:100%;
   }
 
-  .top-bar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:24px;}
+  .top-bar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:20px;}
   
+  /* Live Auto-Sync Status Indicator */
+  .sync-badge{
+    display:inline-flex; align-items:center; gap:6px; background:#e8f5e9; color:var(--leaf);
+    padding:6px 14px; border-radius:20px; font-size:0.82rem; font-weight:700; border:1px solid #a5d6a7;
+  }
+  .sync-dot{width:8px; height:8px; background:var(--leaf); border-radius:50%; animation:pulse 1.5s infinite;}
+  @keyframes pulse{0%{transform:scale(0.8); opacity:0.6;} 50%{transform:scale(1.2); opacity:1;} 100%{transform:scale(0.8); opacity:0.6;}}
+
+  /* New Order Alert Banner */
+  .new-order-banner{
+    display:none; background:#fff3cd; color:#856404; border:2px solid #ffeba5; border-radius:12px;
+    padding:14px 20px; font-size:1rem; font-weight:700; text-align:center; margin-bottom:20px;
+    animation:bounce 0.5s ease;
+  }
+  @keyframes bounce{0%, 100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+
   /* Stats Cards */
   .stats-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:16px; margin-bottom:24px;}
   .stat-card{
@@ -68,17 +84,25 @@
   <h2>Kitchen Owner Login</h2>
   <p style="margin-top:8px; font-size:0.85rem; color:#666;">Enter your owner admin key to manage incoming live orders.</p>
   <input type="password" id="keyInput" placeholder="Admin Key (sm-owner-2026)">
-  <button onclick="loadOrders()">Access POS</button>
+  <button onclick="loadOrders(true)">Access POS Dashboard</button>
 </div>
 
 <div class="wrap" id="app">
+  <!-- New Order Notification Banner -->
+  <div class="new-order-banner" id="newOrderBanner">
+    🔔 NEW ORDER RECEIVED! Refreshing POS dashboard...
+  </div>
+
   <div class="top-bar">
     <div>
       <h1>👨‍🍳 Kitchen Owner POS</h1>
-      <p style="font-size:0.85rem; color:#666;">Sri Meenakshi Foods — Live Order Management</p>
+      <p style="font-size:0.85rem; color:#666;">Sri Meenakshi Foods — Kasibugga Branch Live POS</p>
     </div>
-    <div style="display:flex; gap:10px;">
-      <button onclick="loadOrders()" style="background:var(--maroon); color:#fff; border:none; padding:9px 18px; border-radius:20px; font-weight:600; cursor:pointer;">↻ Refresh</button>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="sync-badge">
+        <span class="sync-dot"></span> Live Auto-Sync (10s)
+      </div>
+      <button onclick="loadOrders(true)" style="background:var(--maroon); color:#fff; border:none; padding:9px 18px; border-radius:20px; font-weight:600; cursor:pointer;">↻ Refresh Now</button>
       <a href="index.html" style="font-size:0.85rem; font-weight:600; align-self:center;">← Store Front</a>
     </div>
   </div>
@@ -104,12 +128,41 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyUEvrv3ipopo948Nskpsxjq2SQhy4lQzWn6MHEbiY_r3CSiByJACk1t8ABd_yciRWk/exec";
   let adminKey = '';
+  let knownOrderIds = new Set();
+  let firstLoad = true;
+  let autoSyncInterval = null;
 
-  async function loadOrders() {
+  // Web Audio Synthesizer Chime Sound Generator (No external MP3 file required)
+  function playOrderChime() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, now); // D5
+      osc.frequency.setValueAtTime(880, now + 0.15); // A5
+
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.6);
+    } catch (e) {}
+  }
+
+  async function loadOrders(isManual = false) {
     if (!adminKey) {
       adminKey = document.getElementById('keyInput').value.trim();
     }
-    if (!adminKey) { alert('Please enter the admin key.'); return; }
+    if (!adminKey) { if (isManual) alert('Please enter the admin key.'); return; }
 
     try {
       const res = await fetch(`${API_URL}?action=list&today=1&key=${encodeURIComponent(adminKey)}`);
@@ -125,9 +178,39 @@
       document.getElementById('app').style.display = 'block';
 
       const orders = data.orders || [];
+      
+      // Check for new incoming orders
+      let hasNew = false;
+      let newestOid = '';
+      let newestTotal = 0;
+
+      orders.forEach(o => {
+        if (!knownOrderIds.has(o.OrderID)) {
+          if (!firstLoad) {
+            hasNew = true;
+            newestOid = o.OrderID;
+            newestTotal = o.Total;
+          }
+          knownOrderIds.add(o.OrderID);
+        }
+      });
+
+      if (hasNew) {
+        playOrderChime();
+        const banner = document.getElementById('newOrderBanner');
+        banner.innerHTML = `🔔 NEW ORDER RECEIVED! Order #${newestOid} (₹${newestTotal})`;
+        banner.style.display = 'block';
+        setTimeout(() => banner.style.display = 'none', 8000);
+      }
+
+      firstLoad = false;
       renderAdminTable(orders);
+
+      if (!autoSyncInterval) {
+        autoSyncInterval = setInterval(() => loadOrders(false), 10000); // 10s auto-refresh
+      }
     } catch (err) {
-      alert('Could not reach backend system.');
+      if (isManual) alert('Could not reach backend system.');
     }
   }
 
@@ -177,7 +260,7 @@
       </tr>`;
     });
 
-    html += '</tbody>mtable>';
+    html += '</tbody></table>';
     wrap.innerHTML = html;
   }
 
@@ -187,7 +270,7 @@
       const data = await res.json();
 
       if (data.success) {
-        loadOrders();
+        loadOrders(false);
       } else {
         alert('Failed to update order status: ' + data.error);
       }

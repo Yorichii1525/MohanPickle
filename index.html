@@ -419,6 +419,7 @@
     </div>
 
     <div class="drawer-body">
+      <!-- Step 1: Items Basket -->
       <div class="step-tab active" id="step1">
         <div id="cartItemsList"></div>
 
@@ -439,40 +440,58 @@
         </div>
       </div>
 
-      <!-- Step 2: Swiggy/Zomato Style Delivery Address & Payment -->
+      <!-- Step 2: Delivery Address & Verified Payment QR Code -->
       <div class="step-tab" id="step2">
         <div class="checkout-loc-card">
           <div>
             <div style="font-size:0.75rem; font-weight:700; color:var(--maroon); text-transform:uppercase;">📍 Delivery Location</div>
             <div style="font-size:0.85rem; font-weight:700; color:var(--ink);" id="checkoutLocBadge">Srinivasanagar, Kasibugga (532222)</div>
           </div>
-          <button class="change-loc-btn" onclick="openLocationModal()">Change Location</button>
+          <button class="change-loc-btn" onclick="openLocationModal()">Change</button>
         </div>
 
-        <h4 style="margin-bottom:10px; color:var(--maroon);">Contact &amp; Address Details</h4>
+        <h4 style="margin-bottom:10px; color:var(--maroon);">1. Contact &amp; Address Details</h4>
         <input type="text" id="cname" class="form-input" placeholder="Full Name *" required>
         <input type="tel" id="cphone" class="form-input" placeholder="10-digit Mobile Number *" required pattern="[0-9]{10}">
         
         <input type="text" id="cflat" class="form-input" placeholder="House / Flat / Hostel / Building Name *" required>
         <input type="text" id="clandmark" class="form-input" placeholder="Landmark &amp; Delivery Notes (e.g. Near Kommadi, Gate 2)">
 
-        <h4 style="margin:16px 0 10px; color:var(--maroon);">Payment Method</h4>
-        <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;">
-          <input type="radio" name="payRadio" value="UPI" checked> Instant UPI (GPay / PhonePe QR)
+        <h4 style="margin:16px 0 10px; color:var(--maroon);">2. Select Payment Method</h4>
+        <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;" onclick="togglePayMode('UPI')">
+          <input type="radio" name="payRadio" value="UPI" id="payRadioUpi" checked> Instant UPI (GPay / PhonePe / Paytm / BHIM)
         </label>
-        <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;">
-          <input type="radio" name="payRadio" value="COD"> Cash on Delivery (COD)
+        <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;" onclick="togglePayMode('COD')">
+          <input type="radio" name="payRadio" value="COD" id="payRadioCod"> Cash on Delivery (COD)
         </label>
+
+        <!-- Live Payment Verification QR Box -->
+        <div id="upiPayBox" style="background:#faf5ed; border:1px dashed var(--turmeric); border-radius:12px; padding:14px; text-align:center; margin-top:12px;">
+          <p style="font-size:0.85rem; font-weight:700; color:var(--maroon); margin-bottom:8px;">Scan &amp; Pay ₹<span id="drawerUpiTotal">0</span> via GPay / PhonePe / Paytm:</p>
+          <img id="drawerQrImg" src="" alt="UPI QR" style="width:140px; height:140px; border:3px solid #fff; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.12);">
+          
+          <div style="margin:8px 0 12px;">
+            <a id="upiPayAppLink" href="#" target="_blank" style="display:inline-block; background:var(--rust); color:#fff; padding:6px 14px; border-radius:16px; font-size:0.8rem; font-weight:700; text-decoration:none;">
+              📱 Tap Here to Pay via PhonePe / GPay
+            </a>
+          </div>
+
+          <div style="font-size:0.78rem; color:#555; margin-bottom:8px;">UPI ID: <strong>7661810326@upi</strong></div>
+          <input type="text" id="upiUtrInput" class="form-input" placeholder="Enter 12-digit UPI UTR / Ref No. *" style="margin-bottom:0; background:#fff;" maxlength="12">
+        </div>
       </div>
 
+      <!-- Step 3: Order Received & Automatic WhatsApp Receipt Broadcast -->
       <div class="step-tab" id="step3" style="text-align:center; padding-top:20px;">
         <div style="width:60px; height:60px; background:var(--leaf); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; margin:0 auto 14px;">✓</div>
         <h2>Order Received! 🎉</h2>
         <div style="font-family:'Fraunces', serif; font-size:1.3rem; color:var(--maroon); background:var(--cream); padding:8px 16px; border-radius:10px; display:inline-block; margin:14px 0; border:1px dashed var(--brass);" id="createdOidDisplay">Order #SM10000</div>
         
+        <p style="font-size:0.85rem; color:var(--leaf-dark); font-weight:700; margin-bottom:12px;">🚀 Opening WhatsApp to send receipt directly to Kitchen Admin...</p>
+
         <div style="margin:12px 0;">
           <a href="#" id="waCheckoutReceiptBtn" target="_blank" style="display:inline-flex; align-items:center; gap:8px; background:var(--leaf); color:#fff; padding:10px 18px; border-radius:20px; font-weight:700; font-size:0.9rem; text-decoration:none;">
-            💬 Send Receipt to Kitchen on WhatsApp
+            💬 Send Receipt Again on WhatsApp
           </a>
         </div>
 
@@ -937,6 +956,7 @@
   let appliedDiscount = 0;
   let drawerStep = 1;
   let createdOid = '';
+  let currentGrandTotal = 0;
 
   FOOD_ITEMS.forEach(i => selectedVariants[i.id] = 0);
 
@@ -1180,11 +1200,11 @@
     const pkgFee = items.length > 0 ? 15 : 0;
     const delFee = (subtotal >= 500 || items.length === 0) ? 0 : 40;
     const discountAmt = Math.round(subtotal * appliedDiscount);
-    const grandTotal = Math.max(0, subtotal + pkgFee + delFee - discountAmt);
+    currentGrandTotal = Math.max(0, subtotal + pkgFee + delFee - discountAmt);
 
     document.getElementById('billSubtotal').textContent = `₹${subtotal}`;
     document.getElementById('billDelivery').textContent = delFee === 0 ? 'FREE' : `₹${delFee}`;
-    document.getElementById('billGrandTotal').textContent = `₹${grandTotal}`;
+    document.getElementById('billGrandTotal').textContent = `₹${currentGrandTotal}`;
   }
 
   function applyCoupon() {
@@ -1192,6 +1212,20 @@
     if (code === 'AMMA10') appliedDiscount = 0.10;
     else appliedDiscount = 0;
     updateCartUI();
+  }
+
+  function togglePayMode(mode) {
+    const upiBox = document.getElementById('upiPayBox');
+    const isUpi = (mode === 'UPI');
+
+    document.getElementById('payRadioUpi').checked = isUpi;
+    document.getElementById('payRadioCod').checked = !isUpi;
+
+    if (isUpi) {
+      upiBox.style.display = 'block';
+    } else {
+      upiBox.style.display = 'none';
+    }
   }
 
   // Location Selector
@@ -1369,7 +1403,14 @@
 
     const nextBtn = document.getElementById('drawerNextBtn');
     if (s === 1) nextBtn.textContent = 'PROCEED TO CHECKOUT ➔';
-    else if (s === 2) nextBtn.textContent = 'PLACE ORDER NOW 🛵';
+    else if (s === 2) {
+      nextBtn.textContent = 'VERIFY & PLACE ORDER 🛵';
+      // Populate UPI QR Code & Total Amount
+      document.getElementById('drawerUpiTotal').textContent = currentGrandTotal;
+      const upiUri = `upi://pay?pa=7661810326@upi&pn=SriMeenakshiFoods&am=${currentGrandTotal}`;
+      document.getElementById('drawerQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUri)}`;
+      document.getElementById('upiPayAppLink').href = upiUri;
+    }
     document.getElementById('drawerFoot').style.display = s === 3 ? 'none' : 'block';
   }
 
@@ -1394,13 +1435,21 @@
         return;
       }
 
+      const payMode = document.querySelector('input[name="payRadio"]:checked')?.value || 'UPI';
+      const utrNo = document.getElementById('upiUtrInput') ? document.getElementById('upiUtrInput').value.trim() : '';
+
+      if (payMode === 'UPI' && utrNo.length < 6) {
+        alert('Please enter your 12-digit UPI UTR / Transaction Reference Number to verify payment.');
+        document.getElementById('upiUtrInput').focus();
+        return;
+      }
+
       const combinedAddress = `${flat}${landmark ? ', Near: ' + landmark : ''}, ${selectedLocationStr}`;
 
       const items = Object.values(cart);
       let subtotal = 0;
       const itemsStr = items.map(i => { subtotal += i.price * i.qty; return `${i.name} (${i.variant}) x${i.qty}`; }).join(', ');
       const totalAmount = subtotal + 15 + (subtotal >= 500 ? 0 : 40) - Math.round(subtotal * appliedDiscount);
-      const payMode = document.querySelector('input[name="payRadio"]:checked')?.value || 'COD';
 
       const nextBtn = document.getElementById('drawerNextBtn');
       nextBtn.disabled = true;
@@ -1409,6 +1458,8 @@
       const generatedOid = 'SM' + Math.floor(10000 + Math.random() * 89999);
       createdOid = generatedOid;
 
+      const fullPaymentModeInfo = payMode === 'UPI' ? `UPI (UTR: ${utrNo})` : 'COD';
+
       // Asynchronous 100% CORS-proof Background POST to Google Apps Script
       try {
         fetch(API_URL, {
@@ -1416,18 +1467,20 @@
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
-            name, phone, items: itemsStr, total: totalAmount, address: combinedAddress, paymentMode: payMode, instructions: document.getElementById('deliveryNote').value
+            name, phone, items: itemsStr, total: totalAmount, address: combinedAddress, paymentMode: fullPaymentModeInfo, instructions: document.getElementById('deliveryNote').value
           })
         });
       } catch (err) {
         console.log('Background sync:', err);
       }
 
-      // Smoothly advance to Order Received Success Screen (Step 3)!
+      // Prepare WhatsApp message for admin
+      const waMsg = `Hi Sri Meenakshi Foods! New Order Confirmed!\n\n📋 *Order ID:* #${createdOid}\n📦 *Items:* ${itemsStr}\n💰 *Total:* ₹${totalAmount} (${fullPaymentModeInfo})\n👤 *Customer:* ${name} (${phone})\n📍 *Address:* ${combinedAddress}`;
+      const waUrl = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
+
+      // Update backup link button in Step 3
+      document.getElementById('waCheckoutReceiptBtn').href = waUrl;
       document.getElementById('createdOidDisplay').textContent = `Order #${createdOid}`;
-      
-      const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOid}.\n\n📦 *Items:* ${itemsStr}\n💰 *Total:* ₹${totalAmount} (${payMode})\n👤 *Customer:* ${name} (${phone})\n📍 *Address:* ${combinedAddress}`;
-      document.getElementById('waCheckoutReceiptBtn').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
 
       localStorage.setItem('sri_meenakshi_last_oid', createdOid);
       localStorage.setItem('sri_meenakshi_last_phone', phone);
@@ -1441,6 +1494,11 @@
       nextBtn.disabled = false;
       drawerStep = 3;
       showStepTab(3);
+
+      // AUTOMATICALLY open Kitchen Admin WhatsApp with pre-filled order receipt!
+      setTimeout(() => {
+        window.open(waUrl, '_blank');
+      }, 300);
     }
   }
 

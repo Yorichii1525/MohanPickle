@@ -147,35 +147,36 @@
       </div>
 
       <div class="card-box">
-        <h3>💳 Payment Method</h3>
+        <h3>💳 Payment Method &amp; Verification</h3>
         
         <label class="pay-option selected" onclick="selectPay('UPI')">
-          <input type="radio" name="payMethod" value="UPI" checked>
+          <input type="radio" name="payMethod" value="UPI" id="payMethodUpi" checked>
           <div>
             <strong>Instant UPI (GPay / PhonePe / PayTM / BHIM)</strong>
-            <div style="font-size:0.78rem; color:#666;">Pay instantly via any UPI app</div>
+            <div style="font-size:0.78rem; color:#666;">Scan QR or tap app to pay &amp; enter UTR</div>
           </div>
         </label>
 
         <div class="qr-box show" id="upiQrBox">
           <p style="font-size:0.85rem; font-weight:600; margin-bottom:8px;">Scan QR to pay ₹<span id="qrTotalSpan">0</span>:</p>
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay?pa=7661810326@upi&pn=SriMeenakshiFoods" alt="UPI QR" style="border:4px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.15); border-radius:8px;">
-          <div style="font-size:0.8rem; color:#555; margin-top:6px;">UPI ID: <strong>7661810326@upi</strong></div>
+          <img id="checkoutQrImg" src="" alt="UPI QR" style="width:150px; height:150px; border:4px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.15); border-radius:8px;">
+          
+          <div style="margin:10px 0;">
+            <a id="checkoutUpiLink" href="#" target="_blank" style="display:inline-block; background:var(--rust); color:#fff; padding:8px 16px; border-radius:20px; font-weight:700; font-size:0.85rem; text-decoration:none;">
+              📱 Tap to Pay via PhonePe / GPay
+            </a>
+          </div>
+
+          <div style="font-size:0.8rem; color:#555; margin-bottom:10px;">UPI ID: <strong>7661810326@upi</strong></div>
+
+          <input type="text" id="c_utr" placeholder="Enter 12-digit UPI UTR / Ref No. *" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; font-size:0.9rem;" maxlength="12">
         </div>
 
         <label class="pay-option" onclick="selectPay('COD')">
-          <input type="radio" name="payMethod" value="COD">
+          <input type="radio" name="payMethod" value="COD" id="payMethodCod">
           <div>
             <strong>Cash on Delivery (COD)</strong>
             <div style="font-size:0.78rem; color:#666;">Pay cash to delivery executive upon arrival</div>
-          </div>
-        </label>
-
-        <label class="pay-option" onclick="selectPay('WhatsApp')">
-          <input type="radio" name="payMethod" value="WhatsApp">
-          <div>
-            <strong>Order via WhatsApp Confirmation</strong>
-            <div style="font-size:0.78rem; color:#666;">Send order directly to kitchen WhatsApp</div>
           </div>
         </label>
       </div>
@@ -186,7 +187,7 @@
         <h3>🛒 Order Summary</h3>
         <div id="checkoutSummaryList"></div>
         <div id="checkoutBillDetails"></div>
-        <button class="place-btn" id="submitOrderBtn" onclick="placeFinalOrder()">PLACE ORDER NOW 🛵</button>
+        <button class="place-btn" id="submitOrderBtn" onclick="placeFinalOrder()">VERIFY &amp; PLACE ORDER 🛵</button>
       </div>
     </div>
   </div>
@@ -197,15 +198,13 @@
   <div class="confirm-card">
     <div class="check-circle">✓</div>
     <h2>Order Placed Successfully! 🎉</h2>
-    <p style="font-size:0.9rem; color:#666; margin-top:6px;">Our kitchen has received your order and is preparing it fresh.</p>
+    <p style="font-size:0.9rem; color:#666; margin-top:6px;">Opening WhatsApp to send receipt automatically to kitchen admin...</p>
     
     <div class="oid-badge" id="confirmedOrderId">Order #SM10000</div>
 
-    <p style="font-size:0.82rem; color:#555;">Save your Order ID to track delivery in real time.</p>
-
     <div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">
       <button class="place-btn" onclick="goToTracking()" style="margin:0;">TRACK ORDER LIVE 🛵</button>
-      <a href="#" id="waConfirmLink" target="_blank" style="font-size:0.88rem; color:var(--leaf-dark); font-weight:600; text-decoration:underline;">Send Receipt to Kitchen on WhatsApp</a>
+      <a href="#" id="waConfirmLink" target="_blank" style="font-size:0.88rem; color:var(--leaf-dark); font-weight:600; text-decoration:underline;">Send Receipt Again on WhatsApp</a>
     </div>
   </div>
 </div>
@@ -217,6 +216,7 @@
   const note = localStorage.getItem('sri_meenakshi_note') || '';
   let selectedPayment = 'UPI';
   let createdOrderId = '';
+  let grandTotalAmount = 0;
 
   function renderCheckoutSummary() {
     const list = document.getElementById('checkoutSummaryList');
@@ -242,23 +242,25 @@
 
     const pkgFee = 15;
     const delFee = subtotal >= 500 ? 0 : 40;
-    const grandTotal = subtotal + pkgFee + delFee;
+    grandTotalAmount = subtotal + pkgFee + delFee;
 
     document.getElementById('checkoutBillDetails').innerHTML = `
       <div class="summary-item" style="margin-top:10px;"><span>Subtotal</span><span>₹${subtotal}</span></div>
       <div class="summary-item"><span>Packaging Charge</span><span>₹${pkgFee}</span></div>
       <div class="summary-item"><span>Delivery Fee</span><span>${delFee === 0 ? 'FREE' : '₹' + delFee}</span></div>
-      <div class="summary-total"><span>Grand Total</span><span>₹${grandTotal}</span></div>
+      <div class="summary-total"><span>Grand Total</span><span>₹${grandTotalAmount}</span></div>
     `;
 
-    document.getElementById('qrTotalSpan').textContent = grandTotal;
+    document.getElementById('qrTotalSpan').textContent = grandTotalAmount;
+    const upiUri = `upi://pay?pa=7661810326@upi&pn=SriMeenakshiFoods&am=${grandTotalAmount}`;
+    document.getElementById('checkoutQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUri)}`;
+    document.getElementById('checkoutUpiLink').href = upiUri;
   }
 
   function selectPay(mode) {
     selectedPayment = mode;
     document.querySelectorAll('.pay-option').forEach(el => el.classList.remove('selected'));
     event.currentTarget.classList.add('selected');
-    event.currentTarget.querySelector('input').checked = true;
 
     const qrBox = document.getElementById('upiQrBox');
     if (mode === 'UPI') {
@@ -287,6 +289,13 @@
       return;
     }
 
+    const utrNo = document.getElementById('c_utr') ? document.getElementById('c_utr').value.trim() : '';
+    if (selectedPayment === 'UPI' && utrNo.length < 6) {
+      alert('Please enter your 12-digit UPI UTR / Transaction Reference Number to verify payment.');
+      document.getElementById('c_utr').focus();
+      return;
+    }
+
     const items = Object.values(cart);
     let subtotal = 0;
     const itemsSummaryStr = items.map(i => {
@@ -294,11 +303,8 @@
       return `${i.name} (${i.variant}) x${i.qty}`;
     }).join(', ');
 
-    const pkgFee = 15;
-    const delFee = subtotal >= 500 ? 0 : 40;
-    const totalAmount = subtotal + pkgFee + delFee;
-
     const fullAddressStr = `${flat}${landmark ? ', Near: ' + landmark : ''}${city ? ', ' + city : ''}`;
+    const fullPayModeInfo = selectedPayment === 'UPI' ? `UPI (UTR: ${utrNo})` : 'COD';
 
     const btn = document.getElementById('submitOrderBtn');
     btn.disabled = true;
@@ -316,9 +322,9 @@
           name: name,
           phone: phone,
           items: itemsSummaryStr,
-          total: totalAmount,
+          total: grandTotalAmount,
           address: fullAddressStr,
-          paymentMode: selectedPayment,
+          paymentMode: fullPayModeInfo,
           instructions: note
         })
       });
@@ -328,15 +334,21 @@
 
     document.getElementById('confirmedOrderId').textContent = `Order #${createdOrderId}`;
     
-    const waMsg = `Hi Sri Meenakshi Foods! I placed Order #${createdOrderId}.\nItems: ${itemsSummaryStr}\nTotal: ₹${totalAmount}\nAddress: ${fullAddressStr}`;
-    document.getElementById('waConfirmLink').href = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
+    const waMsg = `Hi Sri Meenakshi Foods! New Order Confirmed!\n\n📋 *Order ID:* #${createdOrderId}\n📦 *Items:* ${itemsSummaryStr}\n💰 *Total:* ₹${grandTotalAmount} (${fullPayModeInfo})\n👤 *Customer:* ${name} (${phone})\n📍 *Address:* ${fullAddressStr}`;
+    const waUrl = `https://wa.me/917661810326?text=${encodeURIComponent(waMsg)}`;
+    document.getElementById('waConfirmLink').href = waUrl;
 
     localStorage.removeItem('sri_meenakshi_cart');
     localStorage.removeItem('sri_meenakshi_note');
 
     btn.disabled = false;
-    btn.textContent = 'PLACE ORDER NOW 🛵';
+    btn.textContent = 'VERIFY & PLACE ORDER 🛵';
     document.getElementById('confirmModal').classList.add('show');
+
+    // Automatically trigger WhatsApp receipt to Kitchen Admin
+    setTimeout(() => {
+      window.open(waUrl, '_blank');
+    }, 300);
   }
 
   function goToTracking() {

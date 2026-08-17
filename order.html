@@ -167,6 +167,12 @@
             </button>
           </div>
 
+          <!-- Notice for Laptop/Desktop PC Users -->
+          <div style="background:#fff3e0; border:1px solid #ffe0b2; color:#e65100; padding:8px 12px; border-radius:8px; font-size:0.78rem; font-weight:600; margin:10px 0; text-align:left; display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.1rem; flex-shrink:0;">💻</span>
+            <div><strong>Note for Laptop/PC Users:</strong> "Tap to Pay" launches apps on mobile phones. On computers, please scan the QR code above using PhonePe / GPay on your mobile phone to pay.</div>
+          </div>
+
           <div style="font-size:0.8rem; color:#555; margin-bottom:10px;">Name: <strong>THEMBA MEENAKSHI</strong> • UPI ID: <strong>7661810326@ybl</strong></div>
 
           <input type="text" id="c_utr" placeholder="Enter 12-digit UPI UTR / Ref No. *" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; font-size:0.9rem;" maxlength="12">
@@ -298,7 +304,7 @@
       btn.innerHTML = "✓ UPI ID Copied! Scan QR with Phone 📱";
       btn.style.background = "var(--leaf)";
       
-      alert(`💻 You are using a Desktop / Laptop PC!\n\n📱 UPI Payment Apps (PhonePe, GPay, Paytm) run on Mobile Phones.\n\n👉 Please scan the PhonePe QR Code shown on your screen using PhonePe or GPay on your mobile phone to pay ₹${amt}.\n\n(UPI ID: 7661810326@ybl has been copied to your clipboard!)`);
+      alert(`💻 You are using a PC / Laptop!\n\n⚠️ "Tap to Pay" does not work on PC/Laptops because UPI payment apps run on mobile phones.\n\n👉 Please scan the PhonePe QR code shown on screen using PhonePe or GPay on your mobile phone to pay ₹${amt}.\n\n(UPI ID: 7661810326@ybl has been copied to your clipboard!)`);
       
       setTimeout(() => {
         btn.innerHTML = "📱 Tap to Pay directly in PhonePe / GPay App";

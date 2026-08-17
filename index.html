@@ -389,7 +389,7 @@
       <button class="cat-pill" data-cat="nonveg">🍗 Non-Veg Pickles</button>
       <button class="cat-pill" data-cat="veg">🌿 Veg Pickles</button>
       <button class="cat-pill" data-cat="snack">🍬 Snacks &amp; Laddus</button>
-      <button class="cat-pill" data-cat="spice">🌶️ Pure Spices</button>
+      <button class="cat-pill" data-cat="spice">🌶️ Pure Spices &amp; Chutney</button>
     </div>
 
     <label style="font-size:0.82rem; font-weight:700; cursor:pointer;">
@@ -459,24 +459,25 @@
 
         <h4 style="margin:16px 0 10px; color:var(--maroon);">2. Select Payment Method</h4>
         <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;" onclick="togglePayMode('UPI')">
-          <input type="radio" name="payRadio" value="UPI" id="payRadioUpi" checked> Instant UPI (GPay / PhonePe / Paytm / BHIM)
+          <input type="radio" name="payRadio" value="UPI" id="payRadioUpi" checked> Instant PhonePe / GPay / Paytm QR
         </label>
         <label style="display:block; margin-bottom:8px; font-size:0.9rem; cursor:pointer;" onclick="togglePayMode('COD')">
           <input type="radio" name="payRadio" value="COD" id="payRadioCod"> Cash on Delivery (COD)
         </label>
 
-        <!-- Live Payment Verification QR Box -->
-        <div id="upiPayBox" style="background:#faf5ed; border:1px dashed var(--turmeric); border-radius:12px; padding:14px; text-align:center; margin-top:12px;">
-          <p style="font-size:0.85rem; font-weight:700; color:var(--maroon); margin-bottom:8px;">Scan &amp; Pay ₹<span id="drawerUpiTotal">0</span> via GPay / PhonePe / Paytm:</p>
-          <img id="drawerQrImg" src="" alt="UPI QR" style="width:140px; height:140px; border:3px solid #fff; border-radius:10px; box-shadow:0 3px 10px rgba(0,0,0,0.12);">
+        <!-- Official PhonePe Payment QR Box -->
+        <div id="upiPayBox" style="background:#faf5ed; border:1.5px solid var(--turmeric); border-radius:14px; padding:14px; text-align:center; margin-top:12px;">
+          <p style="font-size:0.88rem; font-weight:700; color:var(--maroon); margin-bottom:6px;">Scan &amp; Pay ₹<span id="drawerUpiTotal">0</span> via PhonePe App:</p>
           
-          <div style="margin:8px 0 12px;">
-            <a id="upiPayAppLink" href="#" target="_blank" style="display:inline-block; background:var(--rust); color:#fff; padding:6px 14px; border-radius:16px; font-size:0.8rem; font-weight:700; text-decoration:none;">
-              📱 Tap Here to Pay via PhonePe / GPay
+          <img src="PhonePe QR.jpeg" alt="Official PhonePe QR Code - THEMBA MEENAKSHI" style="width:170px; height:auto; border-radius:10px; border:3px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,0.15); margin:6px 0;">
+
+          <div style="margin:8px 0;">
+            <a id="upiPayAppLink" href="#" target="_blank" style="display:inline-block; background:var(--rust); color:#fff; padding:8px 16px; border-radius:20px; font-size:0.82rem; font-weight:700; text-decoration:none; box-shadow:0 2px 8px rgba(217,78,27,0.3);">
+              📱 Tap to Pay directly in PhonePe / GPay App
             </a>
           </div>
 
-          <div style="font-size:0.78rem; color:#555; margin-bottom:8px;">UPI ID: <strong>7661810326@upi</strong></div>
+          <div style="font-size:0.8rem; color:#555; margin-bottom:8px;">Name: <strong>THEMBA MEENAKSHI</strong> • UPI ID: <strong>7661810326@upi</strong></div>
           <input type="text" id="upiUtrInput" class="form-input" placeholder="Enter 12-digit UPI UTR / Ref No. *" style="margin-bottom:0; background:#fff;" maxlength="12">
         </div>
       </div>
@@ -769,15 +770,15 @@
       name: 'Ragi Ghee Laddu',
       cat: 'snack',
       isVeg: true,
-      rating: '4.8 ★',
-      badge: 'Healthy',
-      desc: 'Finger millet flour roasted in pure ghee and organic jaggery.',
+      rating: '4.9 ★',
+      badge: 'Updated Rates',
+      desc: 'Finger millet flour roasted in pure cow ghee and organic jaggery.',
       img: 'Ragi laddu.jpeg',
       variants: [
-        { label: '125g', price: 86 },
-        { label: '250g', price: 172 },
-        { label: '500g', price: 325 },
-        { label: '1kg', price: 650 }
+        { label: '125g', price: 88 },
+        { label: '250g', price: 175 },
+        { label: '500g', price: 350 },
+        { label: '1kg', price: 700 }
       ]
     },
     {
@@ -857,17 +858,32 @@
       ]
     },
     {
-      id: 'chalimidi',
-      name: 'Chalimidi',
+      id: 'chalividi',
+      name: 'Chalimidi (Chalividi)',
       cat: 'snack',
       isVeg: true,
-      rating: '4.7 ★',
-      badge: '',
-      desc: 'Soft rice flour & coconut sweet prepared for traditional occasions.',
-      img: 'Bellam Gavvalu.jpeg',
+      rating: '4.9 ★',
+      badge: 'Updated Photo',
+      desc: 'Soft rice flour, coconut & cashew sweet prepared for festive occasions.',
+      img: 'Chalimidi.jpeg',
       variants: [
         { label: '500g', price: 250 },
         { label: '1kg', price: 450 }
+      ]
+    },
+    {
+      id: 'senaga_pindi_janthikalu',
+      name: 'Senaga Pindi Janthikalu',
+      cat: 'snack',
+      isVeg: true,
+      rating: '4.9 ★',
+      badge: 'New Item',
+      desc: 'Crispy, crunchy homemade chickpea flour janthikalu murukku snack.',
+      img: 'Senaga Pindi Janthikalu.jpeg',
+      variants: [
+        { label: '250g', price: 125 },
+        { label: '500g', price: 250 },
+        { label: '1kg', price: 500 }
       ]
     },
     {
@@ -891,17 +907,32 @@
       cat: 'snack',
       isVeg: true,
       rating: '5.0 ★',
-      badge: 'Bestseller',
+      badge: 'Updated Rates',
       desc: 'Premium whole cashews roasted in ghee & tossed in red chilli masala.',
       img: 'Roasted Cashew Masala.jpeg',
       variants: [
-        { label: '250g', price: 225 },
-        { label: '500g', price: 450 },
-        { label: '1kg', price: 900 }
+        { label: '250g', price: 250 },
+        { label: '500g', price: 500 },
+        { label: '1kg', price: 1000 }
       ]
     },
 
-    // --- SPICES ---
+    // --- SPICES & CHUTNEYS ---
+    {
+      id: 'instant_palli_chutney',
+      name: 'Instant Palli Chutney Powder',
+      cat: 'spice',
+      isVeg: true,
+      rating: '5.0 ★',
+      badge: 'New Entry',
+      desc: 'Fresh homemade instant peanut chutney powder, roasted with red chillies & garlic.',
+      img: 'Instant Palli Chutney.jpeg',
+      variants: [
+        { label: '250g', price: 110 },
+        { label: '500g', price: 225 },
+        { label: '1kg', price: 450 }
+      ]
+    },
     {
       id: 'garam_masala',
       name: 'Home Garam Masala Powder',
@@ -1080,7 +1111,7 @@
         <div style="grid-column: 1 / -1; text-align:center; padding:40px; background:#fff; border-radius:16px; border:1px solid var(--border-color);">
           <div style="font-size:2.5rem; margin-bottom:8px;">🔍</div>
           <h3>No items found matching "${escapeHtml(search)}"</h3>
-          <p style="color:#666; font-size:0.9rem; margin:8px 0 16px;">Try searching for "chicken", "mango", "ariselu", or "garam masala"</p>
+          <p style="color:#666; font-size:0.9rem; margin:8px 0 16px;">Try searching for "palli chutney", "janthikalu", "ragi laddu", or "cashew"</p>
           <button onclick="clearSearch()" style="background:var(--maroon); color:#fff; border:none; padding:8px 16px; border-radius:20px; font-weight:700; cursor:pointer;">Clear Search</button>
         </div>
       `;
@@ -1405,10 +1436,8 @@
     if (s === 1) nextBtn.textContent = 'PROCEED TO CHECKOUT ➔';
     else if (s === 2) {
       nextBtn.textContent = 'VERIFY & PLACE ORDER 🛵';
-      // Populate UPI QR Code & Total Amount
       document.getElementById('drawerUpiTotal').textContent = currentGrandTotal;
       const upiUri = `upi://pay?pa=7661810326@upi&pn=SriMeenakshiFoods&am=${currentGrandTotal}`;
-      document.getElementById('drawerQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUri)}`;
       document.getElementById('upiPayAppLink').href = upiUri;
     }
     document.getElementById('drawerFoot').style.display = s === 3 ? 'none' : 'block';
